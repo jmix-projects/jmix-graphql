@@ -61,6 +61,10 @@ public class FilterTypesBuilder extends BaseTypesBuilder {
                 .inputValueDefinition(valueDef("GTE", scalarTypeName, "greater than or equals"))
                 .inputValueDefinition(valueDef("LT", scalarTypeName, "less that"))
                 .inputValueDefinition(valueDef("LTE", scalarTypeName, "less than or equals"))
+                .inputValueDefinition(valueDef("_cont", scalarTypeName, "contains substring"))
+                .inputValueDefinition(valueDef("_ncont", scalarTypeName, "not contains substring"))
+                .inputValueDefinition(valueDef("_stw", scalarTypeName, "starts with substring"))
+                .inputValueDefinition(valueDef("_enw", scalarTypeName, "ends with substring"))
                 .build();
     }
 
