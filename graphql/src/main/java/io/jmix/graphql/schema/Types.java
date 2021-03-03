@@ -25,10 +25,10 @@ public class Types {
         GTE(PropertyCondition.Operation.GREATER_OR_EQUAL),
         LT(PropertyCondition.Operation.LESS),
         LTE(PropertyCondition.Operation.LESS_OR_EQUAL),
-        _cont(PropertyCondition.Operation.CONTAINS),
-        _ncont(PropertyCondition.Operation.NOT_CONTAINS),
-        _stw(PropertyCondition.Operation.STARTS_WITH),
-        _enw(PropertyCondition.Operation.ENDS_WITH);
+        _contains(PropertyCondition.Operation.CONTAINS),
+        _notContains(PropertyCondition.Operation.NOT_CONTAINS),
+        _startsWith(PropertyCondition.Operation.STARTS_WITH),
+        _endsWith(PropertyCondition.Operation.ENDS_WITH);
 
         FilterOperation(String jmixOperation) {
             this.jmixOperation = jmixOperation;
