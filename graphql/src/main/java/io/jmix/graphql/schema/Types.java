@@ -29,8 +29,8 @@ public class Types {
         NOT_CONTAINS("_notContains", PropertyCondition.Operation.NOT_CONTAINS),
         STARTS_WITH("_startsWith", PropertyCondition.Operation.STARTS_WITH),
         ENDS_WITH("_endsWith", PropertyCondition.Operation.ENDS_WITH),
-        IN_LIST("_inList", PropertyCondition.Operation.IN_LIST),
-        NOT_IN_LIST("_notInList", PropertyCondition.Operation.NOT_IN_LIST);
+        IN_LIST("_in", PropertyCondition.Operation.IN_LIST),
+        NOT_IN_LIST("_notIn", PropertyCondition.Operation.NOT_IN_LIST);
 
         private final String id;
         private final String jmixOperation;
