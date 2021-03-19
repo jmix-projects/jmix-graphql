@@ -5,7 +5,6 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.security.authentication.GrantedAuthorityContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,7 +19,9 @@ import java.util.UUID;
 @Table(name = "SCR_USER", indexes = {
         @Index(name = "IDX_SCR_USER_ON_USERNAME", columnList = "USERNAME", unique = true)
 })
-public class User implements UserDetails, GrantedAuthorityContainer {
+public class User implements UserDetails
+//        , GrantedAuthorityContainer
+{
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -135,10 +136,10 @@ public class User implements UserDetails, GrantedAuthorityContainer {
         return authorities != null ? authorities : Collections.emptyList();
     }
 
-    @Override
-    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        this.authorities = authorities;
-    }
+//    @Override
+//    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+//        this.authorities = authorities;
+//    }
 
     @Override
     public boolean isAccountNonExpired() {

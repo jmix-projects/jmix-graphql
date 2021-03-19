@@ -16,7 +16,6 @@
 
 package test_support;
 
-import graphql.kickstart.servlet.GraphQLConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.Stores;
@@ -25,6 +24,7 @@ import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.graphql.GraphqlConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
@@ -40,10 +40,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @Configuration
 @ComponentScan
 @PropertySource("classpath:/test_support/test-app.properties")
-@JmixModule(dependsOn = GraphQLConfiguration.class)
+@JmixModule(dependsOn = GraphqlConfiguration.class)
 public class GraphQLTestConfiguration {
 
     @Bean
