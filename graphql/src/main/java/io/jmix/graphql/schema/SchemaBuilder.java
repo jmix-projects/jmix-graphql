@@ -14,6 +14,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.datafetcher.EntityMutationDataFetcher;
 import io.jmix.graphql.datafetcher.EntityQueryDataFetcher;
+import io.jmix.graphql.datafetcher.PermissionDataFetcher;
 import io.jmix.graphql.schema.scalar.CustomScalars;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +48,13 @@ public class SchemaBuilder {
     @Autowired
     protected FilterTypesBuilder filterTypesBuilder;
     @Autowired
+    protected PermissionTypesBuilder permissionTypesBuilder;
+    @Autowired
     protected EntityMutationDataFetcher entityMutationDataFetcher;
     @Autowired
     protected EntityQueryDataFetcher entityQueryDataFetcher;
+    @Autowired
+    protected PermissionDataFetcher permissionDataFetcher;
     @Autowired
     protected Metadata metadata;
 
@@ -141,6 +146,9 @@ public class SchemaBuilder {
             }
         });
 
+        // permission types
+        typeDefinitionRegistry.addAll(permissionTypesBuilder.buildPermissionTypes());
+
         GraphQLSchema graphQLSchema = new SchemaGenerator()
                 .makeExecutableSchema(typeDefinitionRegistry, buildRuntimeWiring(allPersistentMetaClasses).build());
         // schema could be downloaded via 'graphqurl', not need in log
@@ -161,18 +169,18 @@ public class SchemaBuilder {
                 .filter(this::isNotIgnored)
                 // todo filter persistent
                 .forEach(metaClass -> {
-                    Class<Object> javaClass = metaClass.getJavaClass();
                     rwBuilder.type(SCHEMA_QUERY, typeWiring -> typeWiring
-                            .dataFetcher(NamingUtils.composeListQueryName(javaClass), entityQueryDataFetcher.loadEntities(metaClass))
-                            .dataFetcher(NamingUtils.composeByIdQueryName(javaClass), entityQueryDataFetcher.loadEntity(metaClass))
-                            .dataFetcher(NamingUtils.composeCountQueryName(javaClass), entityQueryDataFetcher.countEntities(metaClass)));
+                            .dataFetcher(NamingUtils.composeListQueryName(metaClass), entityQueryDataFetcher.loadEntities(metaClass))
+                            .dataFetcher(NamingUtils.composeByIdQueryName(metaClass), entityQueryDataFetcher.loadEntity(metaClass))
+                            .dataFetcher(NamingUtils.composeCountQueryName(metaClass), entityQueryDataFetcher.countEntities(metaClass))
+                            .dataFetcher(NamingUtils.QUERY_PERMISSIONS, permissionDataFetcher.loadPermissions()));
 
                     rwBuilder.type(SCHEMA_MUTATION, typeWiring -> typeWiring
-                            .dataFetcher(NamingUtils.composeUpsertMutationName(javaClass), entityMutationDataFetcher.upsertEntity(metaClass))
+                            .dataFetcher(NamingUtils.composeUpsertMutationName(metaClass), entityMutationDataFetcher.upsertEntity(metaClass))
                     );
 
                     rwBuilder.type(SCHEMA_MUTATION, typeWiring -> typeWiring
-                            .dataFetcher(NamingUtils.composeDeleteMutationName(javaClass), entityMutationDataFetcher.deleteEntity(metaClass))
+                            .dataFetcher(NamingUtils.composeDeleteMutationName(metaClass), entityMutationDataFetcher.deleteEntity(metaClass))
                     );
                 });
         return rwBuilder;
@@ -184,15 +192,14 @@ public class SchemaBuilder {
         // todo filter persistent only
 
         metaClasses.forEach(metaClass -> {
-            Class<Object> javaClass = metaClass.getJavaClass();
             String typeName = NamingUtils.normalizeOutTypeName(metaClass.getName());
 
-            // query 'cars(filter, limit, offset, orderBy)'
+            // query 'scr_CarList(filter, limit, offset, orderBy)'
             String filterDesc = String.format(
                     "expressions to compare %s objects, all items are combined with logical 'AND'", typeName);
             fields.add(
                     FieldDefinition.newFieldDefinition()
-                            .name(NamingUtils.composeListQueryName(javaClass))
+                            .name(NamingUtils.composeListQueryName(metaClass))
                             .type(ListType.newListType(new TypeName(typeName)).build())
                             .inputValueDefinition(listArg(NamingUtils.FILTER,
                                     filterTypesBuilder.composeFilterConditionTypeName(metaClass),
@@ -205,23 +212,30 @@ public class SchemaBuilder {
                                     "sort the items by one or more fields"))
                             .build());
 
-            // query 'carById(id)'
+            // query 'scr_CarById(id)'
             fields.add(
                     FieldDefinition.newFieldDefinition()
-                            .name(NamingUtils.composeByIdQueryName(javaClass))
+                            .name(NamingUtils.composeByIdQueryName(metaClass))
                             .type(new TypeName(typeName))
                             // todo we need to define 'id' arg type depends on entity id type
                             .inputValueDefinition(argNonNull("id", "String"))
                             .build());
 
-            // query 'countCars()'
+            // query 'scr_CarCount()'
             fields.add(
                     FieldDefinition.newFieldDefinition()
-                            .name(NamingUtils.composeCountQueryName(javaClass))
+                            .name(NamingUtils.composeCountQueryName(metaClass))
                             .type(new TypeName(CustomScalars.GraphQLLong.getName()))
                             .build());
 
         });
+
+        // custom query for permissions
+        fields.add(
+                FieldDefinition.newFieldDefinition()
+                        .name(NamingUtils.QUERY_PERMISSIONS)
+                        .type(new TypeName(NamingUtils.TYPE_SEC_PERMISSION_CONFIG))
+                        .build());
 
         return ObjectTypeDefinition.newObjectTypeDefinition()
                 .name(SCHEMA_QUERY)
@@ -238,18 +252,18 @@ public class SchemaBuilder {
             String outTypeName = NamingUtils.normalizeOutTypeName(metaClass.getName());
             String inpTypeName = NamingUtils.normalizeInpTypeName(metaClass.getName());
 
-            // mutation upsertCar(car: scr_Car)
+            // mutation upsert_scr_Car(car: scr_Car)
             fields.add(
                     FieldDefinition.newFieldDefinition()
-                            .name(NamingUtils.composeUpsertMutationName(javaClass))
+                            .name(NamingUtils.composeUpsertMutationName(metaClass))
                             .type(new TypeName(outTypeName))
                             .inputValueDefinition(argNonNull(NamingUtils.uncapitalizedSimpleName(javaClass), inpTypeName))
                             .build());
 
-            // mutation deleteCar(id: UUID)
+            // mutation delete_scr_Car(id: UUID)
             fields.add(
                     FieldDefinition.newFieldDefinition()
-                            .name(NamingUtils.composeDeleteMutationName(javaClass))
+                            .name(NamingUtils.composeDeleteMutationName(metaClass))
                             .type(new TypeName(CustomScalars.GraphQLVoid.getName()))
                             // todo we need to define 'id' arg type depends on entity id type
                             .inputValueDefinition(argNonNull("id", "String"))
