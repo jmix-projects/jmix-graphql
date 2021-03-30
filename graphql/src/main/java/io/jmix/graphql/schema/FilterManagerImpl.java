@@ -29,7 +29,7 @@ import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLBigDecimal;
 import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLLong;
 import static io.jmix.graphql.schema.scalar.CustomScalars.*;
 
-@Component("graphql_FilterManager")
+@Component("gql_FilterManager")
 public class FilterManagerImpl implements FilterManager {
 
     private static final List<GraphQLScalarType> numberTypes = ImmutableList.of(
@@ -57,16 +57,20 @@ public class FilterManagerImpl implements FilterManager {
 
         if (scalarType.equals(GraphQLUUID)) {
             return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, NOT_EMPTY, IS_NULL);
-        } else if (numberTypes.contains(scalarType)) {
+        }
+        if (numberTypes.contains(scalarType)) {
             return EnumSet.of(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, NOT_EMPTY, IS_NULL);
-        } else if (stringTypes.contains(scalarType)) {
+        }
+        if (stringTypes.contains(scalarType)) {
             return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, NOT_EMPTY, IS_NULL);
-        } else if (dateTimeTypes.contains(scalarType)) {
+        }
+        if (dateTimeTypes.contains(scalarType)) {
             return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, NOT_EMPTY, IS_NULL);
-        } else if (scalarType.equals(GraphQLBoolean)) {
+        }
+        if (scalarType.equals(GraphQLBoolean)) {
             return EnumSet.of(EQ, NEQ, NOT_EMPTY, IS_NULL);
         }
 
-        return EnumSet.of(EQ, NEQ);
+        throw new UnsupportedOperationException("Can't define the operation type for " + scalarType);
     }
 }

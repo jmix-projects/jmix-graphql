@@ -109,10 +109,7 @@ public class Types {
      * @return field
      */
     public static InputValueDefinition valueDef(FilterOperation operation, String type) {
-        return InputValueDefinition.newInputValueDefinition()
-                .name(operation.getId()).type(new TypeName(type))
-                .description(StringUtils.isBlank(operation.getDescription()) ? null : new Description(operation.getDescription(), null, false))
-                .build();
+        return valueDef(operation.getId(), type, operation.description);
     }
 
     /**
@@ -135,10 +132,7 @@ public class Types {
      * @return field
      */
     public static InputValueDefinition listValueDef(FilterOperation operation, String type) {
-        return InputValueDefinition.newInputValueDefinition()
-                .name(operation.getId()).type(new ListType(new TypeName(type)))
-                .description(StringUtils.isBlank(operation.getDescription()) ? null : new Description(operation.getDescription(), null, false))
-                .build();
+        return listValueDef(operation.getId(), type, operation.getDescription());
     }
 
 }
