@@ -2,6 +2,7 @@ import graphql.language.*
 import io.jmix.core.Metadata
 import io.jmix.graphql.schema.FilterManager
 import io.jmix.graphql.schema.FilterTypesBuilder
+import io.jmix.graphql.schema.Types
 import io.jmix.graphql.schema.scalar.CustomScalars
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,10 +23,31 @@ class FiltrationTest extends AbstractGraphQLTest {
     private Metadata metadata
     @Autowired
     private FilterManager filterManager
+    private EnumSet<Types.FilterOperation> stringExpectation
 
     @SuppressWarnings('unused')
     void setup() {
+        stringExpectation = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, NOT_EMPTY, IS_NULL)
+    }
 
+    def "buildScalarFilterConditionType for GraphQLString"() {
+        given:
+        def builder = InputObjectTypeDefinition.newInputObjectDefinition()
+                .name("inp_stringFilterCondition")
+        for (Types.FilterOperation operation : stringExpectation) {
+            if (IN_LIST == operation || NOT_IN_LIST == operation) {
+                builder.inputValueDefinition(listValueDef(operation, GraphQLString.name))
+            } else {
+                builder.inputValueDefinition(valueDef(operation, GraphQLString.name))
+            }
+        }
+        def expectation = builder.build()
+
+        when:
+        def actual = filterTypesBuilder.buildScalarFilterConditionType(GraphQLString)
+
+        then:
+        actual.isEqualTo(expectation)
     }
 
     @SuppressWarnings('UnnecessaryQualifiedReference')
@@ -33,7 +55,6 @@ class FiltrationTest extends AbstractGraphQLTest {
         given:
         def uuidExpectation = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, NOT_EMPTY, IS_NULL)
         def numbersExpectation = EnumSet.of(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, NOT_EMPTY, IS_NULL)
-        def stringExpectation = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, NOT_EMPTY, IS_NULL)
         def dateTimeExpectation = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, NOT_EMPTY, IS_NULL)
         def booleanExpectation = EnumSet.of(EQ, NEQ, NOT_EMPTY, IS_NULL)
 
@@ -71,8 +92,8 @@ class FiltrationTest extends AbstractGraphQLTest {
         intActual == numbersExpectation
         localDateTimeActual == dateTimeExpectation
         dateActual == dateTimeExpectation
-        stringActual == stringExpectation
-        charActual == stringExpectation
+        stringActual == this.stringExpectation
+        charActual == this.stringExpectation
     }
 
     def "doesn't support operation"() {
@@ -125,5 +146,20 @@ class FiltrationTest extends AbstractGraphQLTest {
                 .name(fieldName).type(new ListType(new TypeName(type)))
                 .description(StringUtils.isBlank(description) ? null : new Description(description, null, false))
                 .build()
+    }
+
+    private static InputValueDefinition valueDef(Types.FilterOperation operation, String type) {
+        return valueDef(operation.getId(), type, operation.description)
+    }
+
+    private static InputValueDefinition valueDef(String fieldName, String type, @Nullable String description) {
+        return InputValueDefinition.newInputValueDefinition()
+                .name(fieldName).type(new TypeName(type))
+                .description(StringUtils.isBlank(description) ? null : new Description(description, null, false))
+                .build()
+    }
+
+    private static InputValueDefinition listValueDef(Types.FilterOperation operation, String type) {
+        return listValueDef(operation.getId(), type, operation.getDescription())
     }
 }
