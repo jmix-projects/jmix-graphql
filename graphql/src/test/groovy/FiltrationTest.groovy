@@ -1,6 +1,6 @@
-import graphql.Scalars
 import graphql.language.*
 import io.jmix.core.Metadata
+import io.jmix.graphql.schema.FilterManager
 import io.jmix.graphql.schema.FilterTypesBuilder
 import io.jmix.graphql.schema.scalar.CustomScalars
 import org.apache.commons.lang3.StringUtils
@@ -9,16 +9,81 @@ import test_support.entity.CarDto
 
 import javax.annotation.Nullable
 
+import static graphql.Scalars.*
+import static io.jmix.graphql.schema.Types.FilterOperation.*
+import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLUUID
+import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLVoid
+
 class FiltrationTest extends AbstractGraphQLTest {
 
     @Autowired
     private FilterTypesBuilder filterTypesBuilder
     @Autowired
     private Metadata metadata
+    @Autowired
+    private FilterManager filterManager
 
     @SuppressWarnings('unused')
     void setup() {
 
+    }
+
+    @SuppressWarnings('UnnecessaryQualifiedReference')
+    def "available operations for scalars"() {
+        given:
+        def uuidExpectation = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, NOT_EMPTY, IS_NULL)
+        def numbersExpectation = EnumSet.of(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, NOT_EMPTY, IS_NULL)
+        def stringExpectation = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, NOT_EMPTY, IS_NULL)
+        def dateTimeExpectation = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, NOT_EMPTY, IS_NULL)
+        def booleanExpectation = EnumSet.of(EQ, NEQ, NOT_EMPTY, IS_NULL)
+
+
+        when:
+        def uuidActual = filterManager.availableOperations(CustomScalars.GraphQLUUID)
+        def booleanActual = filterManager.availableOperations(GraphQLBoolean)
+
+        //numberTypes
+        def bigDecimalActual = filterManager.availableOperations(CustomScalars.GraphQLBigDecimal)
+        def longActual = filterManager.availableOperations(CustomScalars.GraphQLLong)
+        def byteActual = filterManager.availableOperations(GraphQLByte)
+        def shortActual = filterManager.availableOperations(GraphQLShort)
+        def floatActual = filterManager.availableOperations(GraphQLFloat)
+        def bigIntActual = filterManager.availableOperations(GraphQLBigInteger)
+        def intActual = filterManager.availableOperations(GraphQLInt)
+
+        //dateTimeTypes
+        def localDateTimeActual = filterManager.availableOperations(CustomScalars.GraphQLLocalDateTime)
+        def dateActual = filterManager.availableOperations(CustomScalars.GraphQLDate)
+
+        //stringTypes
+        def stringActual = filterManager.availableOperations(GraphQLString)
+        def charActual = filterManager.availableOperations(GraphQLChar)
+
+        then:
+        uuidActual == uuidExpectation
+        booleanActual == booleanExpectation
+        bigDecimalActual == numbersExpectation
+        longActual == numbersExpectation
+        byteActual == numbersExpectation
+        shortActual == numbersExpectation
+        floatActual == numbersExpectation
+        bigIntActual == numbersExpectation
+        intActual == numbersExpectation
+        localDateTimeActual == dateTimeExpectation
+        dateActual == dateTimeExpectation
+        stringActual == stringExpectation
+        charActual == stringExpectation
+    }
+
+    def "doesn't support operation"() {
+        given:
+        def unsupportedScalar = GraphQLVoid
+
+        when:
+        filterManager.availableOperations(unsupportedScalar)
+
+        then:
+        thrown UnsupportedOperationException
     }
 
     def "buildFilterConditionType"() {
@@ -43,10 +108,10 @@ class FiltrationTest extends AbstractGraphQLTest {
         List<InputValueDefinition> valueDefs = new ArrayList<>()
 
         def suffix = 'FilterCondition'
-        valueDefs.add(listValueDef("id", CustomScalars.GraphQLUUID.name + suffix, null))
-        valueDefs.add(listValueDef("manufacturer", Scalars.GraphQLString.name + suffix, null))
-        valueDefs.add(listValueDef("price", Scalars.GraphQLBigDecimal.name + suffix, null))
-        valueDefs.add(listValueDef("model", Scalars.GraphQLString.name + suffix, null))
+        valueDefs.add(listValueDef("id", GraphQLUUID.name + suffix, null))
+        valueDefs.add(listValueDef("manufacturer", GraphQLString.name + suffix, null))
+        valueDefs.add(listValueDef("price", GraphQLBigDecimal.name + suffix, null))
+        valueDefs.add(listValueDef("model", GraphQLString.name + suffix, null))
         valueDefs.add(listValueDef(FilterTypesBuilder.ConditionUnionType.AND.name(), className, null))
         valueDefs.add(listValueDef(FilterTypesBuilder.ConditionUnionType.OR.name(), className, null))
 
