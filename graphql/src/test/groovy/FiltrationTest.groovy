@@ -1,4 +1,5 @@
 import graphql.language.*
+import graphql.schema.*
 import io.jmix.core.Metadata
 import io.jmix.graphql.schema.FilterManager
 import io.jmix.graphql.schema.FilterTypesBuilder
@@ -13,7 +14,6 @@ import javax.annotation.Nullable
 import static graphql.Scalars.*
 import static io.jmix.graphql.schema.Types.FilterOperation.*
 import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLUUID
-import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLVoid
 
 class FiltrationTest extends AbstractGraphQLTest {
 
@@ -57,9 +57,11 @@ class FiltrationTest extends AbstractGraphQLTest {
         def numbersExpectation = EnumSet.of(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, NOT_EMPTY, IS_NULL)
         def dateTimeExpectation = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, NOT_EMPTY, IS_NULL)
         def booleanExpectation = EnumSet.of(EQ, NEQ, NOT_EMPTY, IS_NULL)
+        def emptyExpectation = EnumSet.noneOf(Types.FilterOperation.class)
 
 
         when:
+        def voidActual = filterManager.availableOperations(CustomScalars.GraphQLVoid)
         def uuidActual = filterManager.availableOperations(CustomScalars.GraphQLUUID)
         def booleanActual = filterManager.availableOperations(GraphQLBoolean)
 
@@ -81,6 +83,7 @@ class FiltrationTest extends AbstractGraphQLTest {
         def charActual = filterManager.availableOperations(GraphQLChar)
 
         then:
+        voidActual == emptyExpectation
         uuidActual == uuidExpectation
         booleanActual == booleanExpectation
         bigDecimalActual == numbersExpectation
@@ -98,7 +101,25 @@ class FiltrationTest extends AbstractGraphQLTest {
 
     def "doesn't support operation"() {
         given:
-        def unsupportedScalar = GraphQLVoid
+        def unsupportedScalar = new GraphQLScalarType(
+                "unknownName",
+                "unknown description",
+                new Coercing() {
+                    @Override
+                    Object serialize(Object dataFetcherResult) throws CoercingSerializeException {
+                        return null
+                    }
+
+                    @Override
+                    Object parseValue(Object input) throws CoercingParseValueException {
+                        return null
+                    }
+
+                    @Override
+                    Object parseLiteral(Object input) throws CoercingParseLiteralException {
+                        return null
+                    }
+                })
 
         when:
         filterManager.availableOperations(unsupportedScalar)
