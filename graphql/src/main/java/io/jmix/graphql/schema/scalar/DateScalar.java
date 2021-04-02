@@ -19,7 +19,6 @@ public class DateScalar extends GraphQLScalarType{
 
     static final Logger log = LoggerFactory.getLogger(DateScalar.class);
 
-
     public DateScalar() {
         super("Date", "Date type", new Coercing() {
 
@@ -38,18 +37,22 @@ public class DateScalar extends GraphQLScalarType{
 
             @Override
             public Object parseValue(Object input) {
-                return serialize(input);
+                return parseLiteral(input);
             }
 
             @Override
             public Object parseLiteral(Object input) {
                 if (input instanceof StringValue) {
                     String value = ((StringValue) input).getValue();
+                    if (value.isEmpty()) {
+                        return Date.from(Instant.EPOCH);
+                    }
                     TemporalAccessor temporalAccessor = DateTimeFormatter.ISO_INSTANT.parse(value);
+                    Date date = Date.from(Instant.from(temporalAccessor));
 
-                    String dateString = SERIALIZATION_DATE_FORMAT.format(Date.from(Instant.from(temporalAccessor)));
+                    String dateString = SERIALIZATION_DATE_FORMAT.format(date);
                     log.info("parseLiteral return {}", dateString);
-                    return dateString;
+                    return date;
                 }
                 throw new CoercingSerializeException(
                         "Expected type 'StringValue' but was '" + input.getClass().getSimpleName() + "'.");
