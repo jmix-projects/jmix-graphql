@@ -13,6 +13,7 @@ import javax.annotation.Nullable
 
 import static graphql.Scalars.*
 import static io.jmix.graphql.schema.Types.FilterOperation.*
+import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLLong
 import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLUUID
 
 class FiltrationTest extends AbstractGraphQLTest {
@@ -23,42 +24,96 @@ class FiltrationTest extends AbstractGraphQLTest {
     private Metadata metadata
     @Autowired
     private FilterManager filterManager
-    private EnumSet<Types.FilterOperation> stringExpectation
+
+    private EnumSet<Types.FilterOperation> stringFilterOPs
+    private EnumSet<Types.FilterOperation> uuidFilterOPs
+    private EnumSet<Types.FilterOperation> numbersFilterOPs
+    private EnumSet<Types.FilterOperation> dateTimeFilterOPs
+    private EnumSet<Types.FilterOperation> booleanFilterOPs
+    private EnumSet<Types.FilterOperation> emptyFilterOPs
 
     @SuppressWarnings('unused')
     void setup() {
-        stringExpectation = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, NOT_EMPTY, IS_NULL)
+        stringFilterOPs = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, NOT_EMPTY, IS_NULL)
+        uuidFilterOPs = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, NOT_EMPTY, IS_NULL)
+        numbersFilterOPs = EnumSet.of(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, NOT_EMPTY, IS_NULL)
+        dateTimeFilterOPs = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, NOT_EMPTY, IS_NULL)
+        booleanFilterOPs = EnumSet.of(EQ, NEQ, NOT_EMPTY, IS_NULL)
+        emptyFilterOPs = EnumSet.noneOf(Types.FilterOperation.class)
     }
 
+    @SuppressWarnings('UnnecessaryQualifiedReference')
     def "buildScalarFilterConditionType for GraphQLString"() {
         given:
-        def builder = InputObjectTypeDefinition.newInputObjectDefinition()
-                .name("inp_stringFilterCondition")
-        for (Types.FilterOperation operation : stringExpectation) {
-            if (IN_LIST == operation || NOT_IN_LIST == operation) {
-                builder.inputValueDefinition(listValueDef(operation, GraphQLString.name))
-            } else {
-                builder.inputValueDefinition(valueDef(operation, GraphQLString.name))
-            }
-        }
-        def expectation = builder.build()
+        def emptyER = createCondition("inp_voidFilterCondition", emptyFilterOPs)
+        def uuidER = createCondition("inp_uUIDFilterCondition", uuidFilterOPs)
+        def booleanER = createCondition("inp_booleanFilterCondition", booleanFilterOPs)
+
+        //numberTypes
+        def bigDecimalER = createCondition("inp_bigDecimalFilterCondition", numbersFilterOPs)
+        def longER = createCondition("inp_longFilterCondition", numbersFilterOPs)
+        def byteER = createCondition("inp_byteFilterCondition", numbersFilterOPs)
+        def shortER = createCondition("inp_shortFilterCondition", numbersFilterOPs)
+        def floatER = createCondition("inp_floatFilterCondition", numbersFilterOPs)
+        def bigIntER = createCondition("inp_bigIntegerFilterCondition", numbersFilterOPs)
+        def intER = createCondition("inp_intFilterCondition", numbersFilterOPs)
+
+        //dateTimeTypes
+        def localDateTimeER = createCondition("inp_localDateTimeFilterCondition", dateTimeFilterOPs)
+        def dateER = createCondition("inp_dateFilterCondition", dateTimeFilterOPs)
+
+        //stringTypes
+        def stringER = createCondition("inp_stringFilterCondition", stringFilterOPs)
+        def charER = createCondition("inp_charFilterCondition", stringFilterOPs)
 
         when:
-        def actual = filterTypesBuilder.buildScalarFilterConditionType(GraphQLString)
+        def emptyAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLVoid)
+        def uuidAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLUUID)
+        def booleanAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLBoolean)
+
+        //numberTypes
+        def bigDecimalAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLBigDecimal)
+        def longAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLLong)
+        def byteAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLByte)
+        def shortAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLShort)
+        def floatAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLFloat)
+        def bigIntAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLBigInteger)
+        def intAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLInt)
+
+        //dateTimeTypes
+        def localDateTimeAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLLocalDateTime)
+        def dateAR = filterTypesBuilder.buildScalarFilterConditionType(CustomScalars.GraphQLDate)
+
+        //stringTypes
+        def stringAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLString)
+        def charAR = filterTypesBuilder.buildScalarFilterConditionType(GraphQLChar)
 
         then:
-        actual.isEqualTo(expectation)
+        emptyAR.isEqualTo(emptyER)
+        uuidAR.isEqualTo(uuidER)
+        booleanAR.isEqualTo(booleanER)
+
+        //numberTypes
+        bigDecimalAR.isEqualTo(bigDecimalER)
+        longAR.isEqualTo(longER)
+        byteAR.isEqualTo(byteER)
+        shortAR.isEqualTo(shortER)
+        floatAR.isEqualTo(floatER)
+        bigIntAR.isEqualTo(bigIntER)
+        intAR.isEqualTo(intER)
+
+        //dateTimeTypes
+        localDateTimeAR.isEqualTo(localDateTimeER)
+        dateAR.isEqualTo(dateER)
+
+        //stringTypes
+        charAR.isEqualTo(charER)
+        stringAR.isEqualTo(stringER)
     }
 
     @SuppressWarnings('UnnecessaryQualifiedReference')
     def "available operations for scalars"() {
         given:
-        def uuidExpectation = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, NOT_EMPTY, IS_NULL)
-        def numbersExpectation = EnumSet.of(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, NOT_EMPTY, IS_NULL)
-        def dateTimeExpectation = EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, NOT_EMPTY, IS_NULL)
-        def booleanExpectation = EnumSet.of(EQ, NEQ, NOT_EMPTY, IS_NULL)
-        def emptyExpectation = EnumSet.noneOf(Types.FilterOperation.class)
-
 
         when:
         def voidActual = filterManager.availableOperations(CustomScalars.GraphQLVoid)
@@ -83,20 +138,20 @@ class FiltrationTest extends AbstractGraphQLTest {
         def charActual = filterManager.availableOperations(GraphQLChar)
 
         then:
-        voidActual == emptyExpectation
-        uuidActual == uuidExpectation
-        booleanActual == booleanExpectation
-        bigDecimalActual == numbersExpectation
-        longActual == numbersExpectation
-        byteActual == numbersExpectation
-        shortActual == numbersExpectation
-        floatActual == numbersExpectation
-        bigIntActual == numbersExpectation
-        intActual == numbersExpectation
-        localDateTimeActual == dateTimeExpectation
-        dateActual == dateTimeExpectation
-        stringActual == this.stringExpectation
-        charActual == this.stringExpectation
+        voidActual == emptyFilterOPs
+        uuidActual == uuidFilterOPs
+        booleanActual == booleanFilterOPs
+        bigDecimalActual == numbersFilterOPs
+        longActual == numbersFilterOPs
+        byteActual == numbersFilterOPs
+        shortActual == numbersFilterOPs
+        floatActual == numbersFilterOPs
+        bigIntActual == numbersFilterOPs
+        intActual == numbersFilterOPs
+        localDateTimeActual == dateTimeFilterOPs
+        dateActual == dateTimeFilterOPs
+        stringActual == stringFilterOPs
+        charActual == stringFilterOPs
     }
 
     def "doesn't support operation"() {
@@ -182,5 +237,18 @@ class FiltrationTest extends AbstractGraphQLTest {
 
     private static InputValueDefinition listValueDef(Types.FilterOperation operation, String type) {
         return listValueDef(operation.getId(), type, operation.getDescription())
+    }
+
+    static InputObjectTypeDefinition createCondition(String name, EnumSet<Types.FilterOperation> operations) {
+       def builder = InputObjectTypeDefinition.newInputObjectDefinition()
+                .name(name)
+        for (Types.FilterOperation operation : operations) {
+            if (IN_LIST == operation || NOT_IN_LIST == operation) {
+                builder.inputValueDefinition(listValueDef(operation, GraphQLString.name))
+            } else {
+                builder.inputValueDefinition(valueDef(operation, GraphQLString.name))
+            }
+        }
+        return builder.build()
     }
 }
