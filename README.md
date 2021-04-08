@@ -217,9 +217,10 @@ The table below shows the dependency of types.
 | Field type    | Available operations |
 | :---          |    :---- |
 | uuid          | _eq, _neq, _in, _notIn, _isNull |
-| numbers       | _eq, _neq, _gt, _gte, _lt, _lte, _in, _notIn, _notEmpty |
+| numbers       | _eq, _neq, _gt, _gte, _lt, _lte, _in, _notIn, _isNull |
 | string/char   | _eq, _neq, _in, _notIn, _contains, _startsWith, _endsWith, _isNull |
 | date          | _eq, _neq, _gt, _gte, _lt, _lte, _in, _notIn, _isNull |
 | boolean       | _eq, _neq, _isNull |
 
 
+**Please pay attention** that filter conditions `_eq`, `_in`, `_notIn` have strict case matching and `_contains`, `_endsWith`, `_startsWith` have ignore case matching for strings.
