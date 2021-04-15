@@ -16,14 +16,9 @@
 
 package io.jmix.graphql.schema
 
-import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.jmix.graphql.AbstractGraphQLTest
-import org.springframework.beans.factory.annotation.Autowired
 
 class SortingTest extends AbstractGraphQLTest {
-
-    @Autowired
-    GraphQLTestTemplate graphQLTestTemplate
 
     def "default sorting by lastModifiedDate is enabled without any sorting"() {
         when:

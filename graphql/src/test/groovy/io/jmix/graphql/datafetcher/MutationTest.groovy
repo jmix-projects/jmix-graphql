@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql
+package io.jmix.graphql.datafetcher
 
-class ServletStartedTest extends AbstractGraphQLTest {
+import io.jmix.graphql.AbstractGraphQLTest
 
-    def "graphql servlet started"() {
+class MutationTest extends AbstractGraphQLTest {
+
+    def "should create new Car instance and return additional fetched attributes "() {
         when:
-        def response = graphQLTestTemplate.postForResource("graphql/schema-description.graphql")
-//        println "response = $response.rawResponse"
-
+        def response = graphQLTestTemplate.postForResource(
+                "graphql/io/jmix/graphql/datafetcher/upsert-car.gql")
         then:
-        response.rawResponse.body == '{"data":{"__schema":{"description":null}}}'
+        response.get('$.data.upsert_scr_Car._instanceName') == "TESLA - Z"
+        response.get('$.data.upsert_scr_Car.garage') == null
+        response.get('$.data.upsert_scr_Car.maxPassengers') == null
     }
 
 }

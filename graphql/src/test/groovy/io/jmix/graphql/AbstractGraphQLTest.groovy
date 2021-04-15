@@ -17,6 +17,7 @@
 package io.jmix.graphql
 
 import com.graphql.spring.boot.test.GraphQLTestAutoConfiguration
+import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
@@ -54,6 +55,9 @@ import test_support.TestContextInitializer
 class AbstractGraphQLTest extends Specification {
 
     protected TransactionTemplate transaction
+
+    @Autowired
+    protected GraphQLTestTemplate graphQLTestTemplate
 
     @Autowired
     protected void setTransactionManager(PlatformTransactionManager transactionManager) {
