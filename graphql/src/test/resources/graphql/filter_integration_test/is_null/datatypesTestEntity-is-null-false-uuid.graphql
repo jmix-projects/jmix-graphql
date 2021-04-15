@@ -1,0 +1,6 @@
+{
+  scr_DatatypesTestEntityList(filter: [{uuidAttr: {_isNull: false}}]){
+    id
+    uuidAttr
+  }
+}

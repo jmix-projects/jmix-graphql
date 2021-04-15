@@ -1,0 +1,6 @@
+{
+  scr_GarageList(filter: [{name: {_notIn: ["hillwood city", "chez paris"]}}]){
+    id
+    name
+  }
+}

@@ -1,0 +1,6 @@
+{
+  scr_GarageList(filter: [{name: {_eq: "Hillwood City"}}]){
+    id
+    name
+  }
+}

@@ -1,0 +1,6 @@
+{
+  scr_DatatypesTestEntityList(filter: [{integerAttr: {_isNull: true}}]){
+    id
+    integerAttr
+  }
+}
