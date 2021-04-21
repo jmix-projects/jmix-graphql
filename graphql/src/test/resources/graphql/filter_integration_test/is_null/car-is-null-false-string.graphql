@@ -1,6 +1,0 @@
-{
-  scr_CarList(filter: [{model: {_isNull: false}}]){
-    id
-    model
-  }
-}

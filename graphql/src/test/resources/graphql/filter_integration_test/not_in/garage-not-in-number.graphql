@@ -1,6 +1,0 @@
-{
-  scr_GarageList(filter: [{capacity: {_notIn: [50, 21, 7]}}]){
-    id
-    capacity
-  }
-}

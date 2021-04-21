@@ -1,6 +1,0 @@
-{
-  scr_GarageList(filter: [{capacity: {_lte: 50}}]){
-    id
-    capacity
-  }
-}

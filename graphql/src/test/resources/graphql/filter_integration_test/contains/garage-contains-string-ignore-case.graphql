@@ -1,6 +1,0 @@
-{
-  scr_GarageList(filter: [{name: {_contains: "hillwood"}}]){
-    id
-    name
-  }
-}

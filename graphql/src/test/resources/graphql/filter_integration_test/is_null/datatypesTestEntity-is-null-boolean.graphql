@@ -1,6 +1,0 @@
-{
-  scr_DatatypesTestEntityList(filter: [{booleanAttr: {_isNull: true}}]){
-    id
-    booleanAttr
-  }
-}

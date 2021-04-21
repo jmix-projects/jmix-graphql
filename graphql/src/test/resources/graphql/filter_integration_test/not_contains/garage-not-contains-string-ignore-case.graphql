@@ -1,6 +1,0 @@
-{
-  scr_GarageList(filter: [{name: {_notContains: "hillwood"}}]){
-    id
-    name
-  }
-}

@@ -1,5 +1,0 @@
-{
-  scr_GarageList(filter: [{id: {_notIn: ["bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948"]}}]){
-    id
-  }
-}

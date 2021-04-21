@@ -1,6 +1,0 @@
-{
-  scr_CarList(filter: [{lastModifiedDate: {_isNull: true}}]){
-    id
-    lastModifiedDate
-  }
-}

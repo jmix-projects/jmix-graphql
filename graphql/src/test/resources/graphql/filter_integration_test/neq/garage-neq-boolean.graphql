@@ -1,6 +1,0 @@
-{
-  scr_GarageList(filter: [{vanEntry: {_neq: false}}]){
-    id
-    vanEntry
-  }
-}
