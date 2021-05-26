@@ -39,6 +39,7 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
     def "all entities messages"() {
         when:
         def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
                 .postForResource(
                         "graphql/io/jmix/graphql/datafetcher/entities-messages.graphql"
                 )
@@ -71,6 +72,7 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
     def 'scr$Car messages'() {
         when:
         def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
                 .perform(
                         "graphql/io/jmix/graphql/datafetcher/entities-messages.graphql",
                         asObjectNode('{"className": "scr$Car"}')
@@ -104,6 +106,7 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
     def 'scr$Car messages with locale'() {
         when:
         def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
                 .perform(
                         "graphql/io/jmix/graphql/datafetcher/entities-messages.graphql",
                         asObjectNode('{"className": "scr$Car", "locale": "ru"}')
@@ -137,6 +140,7 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
     def "all enum messages"() {
         when:
         def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
                 .postForResource(
                         "graphql/io/jmix/graphql/datafetcher/enum-messages.graphql"
                 )
@@ -152,6 +156,7 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
     def "CarType enum messages"() {
         when:
         def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
                 .perform(
                         "graphql/io/jmix/graphql/datafetcher/enum-messages.graphql",
                         asObjectNode('{"className": "test_support.entity.CarType"}')
@@ -168,6 +173,7 @@ class MessagesDataFetcherTest extends AbstractGraphQLTest {
     def "CarType enum messages with locale"() {
         when:
         def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
                 .perform(
                         "graphql/io/jmix/graphql/datafetcher/enum-messages.graphql",
                         asObjectNode('{"className": "test_support.entity.CarType", "locale": "ru"}')

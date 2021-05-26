@@ -25,12 +25,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_eq for numbers"() {
         when:
         //where capacity = 50
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"capacity": {"_eq": "50"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"capacity": {"_eq": "50"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -42,12 +44,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_eq for string with strict case"() {
         when:
         //where name = "Hillwood City"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_eq": "Hillwood City"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_eq": "Hillwood City"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -58,12 +62,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_eq for string with ignore case"() {
         when:
         //where name = "hillwood city"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_eq": "hillwood city"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_eq": "hillwood city"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[]}}'
@@ -72,12 +78,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_eq for boolean"() {
         when:
         //where vanEntry = false
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"vanEntry": {"_eq": "false"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"vanEntry": {"_eq": "false"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -90,12 +98,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_eq for UUID"() {
         when:
         //where id = "bfe41616-f03d-f287-1397-8619f5dde390"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"id": {"_eq": "bfe41616-f03d-f287-1397-8619f5dde390"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"id": {"_eq": "bfe41616-f03d-f287-1397-8619f5dde390"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -106,12 +116,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_eq for date"() {
         when:
         //where dateAttr = "2020-03-03"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateAttr": {"_eq": "2020-03-03"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateAttr": {"_eq": "2020-03-03"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -122,12 +134,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_eq for time"() {
         when:
         //where timeAttr = "03:03:03"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"timeAttr": {"_eq": "03:03:03"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"timeAttr": {"_eq": "03:03:03"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -138,12 +152,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_eq for dateTime"() {
         when:
         //where dateTimeAttr = "2020-03-03T03:03:03"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateTimeAttr": {"_eq": "2020-03-03T03:03:03"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateTimeAttr": {"_eq": "2020-03-03T03:03:03"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -154,12 +170,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_eq for localDate"() {
         when:
         //where localDateAttr = "2020-02-02"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateAttr": {"_eq": "2020-02-02"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateAttr": {"_eq": "2020-02-02"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -170,12 +188,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_eq for localDateTime"() {
         when:
         //where localDateTimeAttr = "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateTimeAttr": {"_eq": "2020-02-02T22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateTimeAttr": {"_eq": "2020-02-02T22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -186,12 +206,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_eq for localTime"() {
         when:
         //where localTimeAttr = "22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localTimeAttr": {"_eq": "22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localTimeAttr": {"_eq": "22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -204,7 +226,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_eq for offsetDateTime"() {
 //        when:
 //        //where offsetDateTimeAttr = "2020-02-02T22:22:22+04:00"
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//                .withBearerAuth(adminToken)
+//                .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetDateTimeAttr": {"_eq": "2020-02-02T22:22:22+04:00"}}' +
@@ -220,7 +244,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_eq for offsetTime"() {
 //        when:
 //        //where offsetTimeAttr = "11:11:11+04:00"
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//            .withBearerAuth (adminToken)
+//            .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetTimeAttr": {"_eq": "11:11:11+04:00"}}' +
@@ -233,15 +259,17 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //                ']}}'
 //    }
 
-    def "_neq for numbers"() {
+def "_neq for numbers" () {
         when:
         //where capacity <> 50
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"capacity": {"_neq": "50"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"capacity": {"_neq": "50"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -259,12 +287,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_neq for string with strict case"() {
         when:
         //where name <> "Hillwood City"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_neq": "Hillwood City"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_neq": "Hillwood City"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -283,12 +313,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_neq for string with ignore case"() {
         when:
         //where name <> "hillwood city"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_neq": "hillwood city"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_neq": "hillwood city"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -308,12 +340,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_neq for boolean"() {
         when:
         //where vanEntry <> false
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"vanEntry": {"_neq": "false"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"vanEntry": {"_neq": "false"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -330,12 +364,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_neq for UUID"() {
         when:
         //where id <> "bfe41616-f03d-f287-1397-8619f5dde390"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"id": {"_neq": "bfe41616-f03d-f287-1397-8619f5dde390"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"id": {"_neq": "bfe41616-f03d-f287-1397-8619f5dde390"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -354,12 +390,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_neq for date"() {
         when:
         //where dateAttr <> "2020-03-03"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateAttr": {"_neq": "2020-03-03"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateAttr": {"_neq": "2020-03-03"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -371,12 +409,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_neq for time"() {
         when:
         //where timeAttr <> "03:03:03"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"timeAttr": {"_neq": "03:03:03"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"timeAttr": {"_neq": "03:03:03"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -388,12 +428,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_neq for dateTime"() {
         when:
         //where dateTimeAttr <> "2020-03-03T03:03:03"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateTimeAttr": {"_neq": "2020-03-03T03:03:03"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateTimeAttr": {"_neq": "2020-03-03T03:03:03"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -405,12 +447,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_neq for localDate"() {
         when:
         //where localDateAttr <> "2020-02-02"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateAttr": {"_neq": "2020-02-02"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateAttr": {"_neq": "2020-02-02"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -422,12 +466,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_neq for localDateTime"() {
         when:
         //where localDateTimeAttr <> "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateTimeAttr": {"_neq": "2020-02-02T22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateTimeAttr": {"_neq": "2020-02-02T22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -439,12 +485,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_neq for localTime"() {
         when:
         //where localTimeAttr <> "22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localTimeAttr": {"_neq": "22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localTimeAttr": {"_neq": "22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -458,7 +506,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_neq for offsetDateTime"() {
 //        when:
 //        //where offsetDateTimeAttr <> "2020-02-02T22:22:22"
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//              .withBearerAuth(adminToken)
+//              .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetDateTimeAttr": {"_neq": "2020-02-02T22:22:22+04:00"}}' +
@@ -475,7 +525,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_neq for offsetTime"() {
 //        when:
 //        //where offsetTimeAttr <> "11:11:11+04:00"
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//              .withBearerAuth (adminToken)
+//              .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetTimeAttr": {"_neq": "11:11:11+04:00"}}' +
@@ -489,15 +541,17 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //                ']}}'
 //    }
 
-    def "_gt for numbers"() {
+def "_gt for numbers" () {
         when:
         //where capacity > 50
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"capacity": {"_gt": "50"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"capacity": {"_gt": "50"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -510,12 +564,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gt for date"() {
         when:
         //where dateAttr > "2020-02-02"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateAttr": {"_gt": "2020-02-02"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateAttr": {"_gt": "2020-02-02"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -526,12 +582,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gt for time"() {
         when:
         //where timeAttr > "11:11:11"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"timeAttr": {"_gt": "11:11:11"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"timeAttr": {"_gt": "11:11:11"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -542,12 +600,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gt for dateTime"() {
         when:
         //where dateTimeAttr > "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateTimeAttr": {"_gt": "2020-02-02T22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateTimeAttr": {"_gt": "2020-02-02T22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -558,12 +618,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gt for localDate"() {
         when:
         //where localDateAttr > "2020-02-02"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateAttr": {"_gt": "2020-02-02"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateAttr": {"_gt": "2020-02-02"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -574,12 +636,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gt for localDateTime"() {
         when:
         //where localDateTimeAttr > "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateTimeAttr": {"_gt": "2020-02-02T22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateTimeAttr": {"_gt": "2020-02-02T22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -590,12 +654,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gt for localTime"() {
         when:
         //where localTimeAttr > "11:11:11"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localTimeAttr": {"_gt": "11:11:11"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localTimeAttr": {"_gt": "11:11:11"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -606,12 +672,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gt for offsetDateTime"() {
         when:
         //where offsetDateTimeAttr > "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"offsetDateTimeAttr": {"_gt": "2020-02-02T22:22:22+04:00"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"offsetDateTimeAttr": {"_gt": "2020-02-02T22:22:22+04:00"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -623,7 +691,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_gt for offsetTime"() {
 //        when:
 //        //where offsetTimeAttr > "11:11:11+04:00"
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//              .withBearerAuth(adminToken)
+//              .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetTimeAttr": {"_gt": "11:11:11+04:00"}}' +
@@ -636,15 +706,17 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //                ']}}'
 //    }
 
-    def "_gte for numbers"() {
+def "_gte for numbers" () {
         when:
         //where capacity >= 50
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"capacity": {"_gte": "50"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"capacity": {"_gte": "50"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -659,12 +731,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gte for date"() {
         when:
         //where dateAttr >= "2020-02-02"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateAttr": {"_gte": "2020-02-02"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateAttr": {"_gte": "2020-02-02"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -676,12 +750,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gte for time"() {
         when:
         //where timeAttr >= "11:11:11"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"timeAttr": {"_gte": "11:11:11"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"timeAttr": {"_gte": "11:11:11"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -693,12 +769,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gte for dateTime"() {
         when:
         //where dateTimeAttr >= "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateTimeAttr": {"_gte": "2020-02-02T22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateTimeAttr": {"_gte": "2020-02-02T22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -710,12 +788,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gte for localDate"() {
         when:
         //where localDateAttr >= "2020-02-02"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateAttr": {"_gte": "2020-02-02"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateAttr": {"_gte": "2020-02-02"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -727,12 +807,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gte for localDateTime"() {
         when:
         //where localDateTimeAttr >= "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateTimeAttr": {"_gte": "2020-02-02T22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateTimeAttr": {"_gte": "2020-02-02T22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -744,12 +826,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_gte for localTime"() {
         when:
         //where localTimeAttr >= "11:11:11"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localTimeAttr": {"_gte": "11:11:11"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localTimeAttr": {"_gte": "11:11:11"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -763,7 +847,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_gte for offsetDateTime"() {
 //        when:
 //        //where offsetDateTimeAttr >= "2020-02-02T22:22:22"
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//              .withBearerAuth(adminToken)
+//              .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetDateTimeAttr": {"_gte": "2020-02-02T22:22:22+04:00"}}' +
@@ -780,7 +866,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_gte for offsetTime"() {
 //        when:
 //        //where offsetTimeAttr >= "11:11:11+04:00"
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//              .withBearerAuth (adminToken)
+//              .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetTimeAttr": {"_gte": "11:11:11+04:00"}}' +
@@ -794,15 +882,17 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //                ']}}'
 //    }
 
-    def "_lt for numbers"() {
+def "_lt for numbers" () {
         when:
         //where capacity < 50
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"capacity": {"_lt": "50"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"capacity": {"_lt": "50"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -817,12 +907,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lt for date"() {
         when:
         //where dateAttr < "2020-02-02"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateAttr": {"_lt": "2020-02-02"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateAttr": {"_lt": "2020-02-02"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -833,12 +925,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lt for time"() {
         when:
         //where timeAttr < "11:11:11"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"timeAttr": {"_lt": "11:11:11"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"timeAttr": {"_lt": "11:11:11"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -849,12 +943,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lt for dateTime"() {
         when:
         //where dateTimeAttr < "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateTimeAttr": {"_lt": "2020-02-02T22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateTimeAttr": {"_lt": "2020-02-02T22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -865,12 +961,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lt for localDate"() {
         when:
         //where localDateAttr < "2020-02-02"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateAttr": {"_lt": "2020-02-02"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateAttr": {"_lt": "2020-02-02"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -881,12 +979,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lt for localDateTime"() {
         when:
         //where localDateTimeAttr < "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateTimeAttr": {"_lt": "2020-02-02T22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateTimeAttr": {"_lt": "2020-02-02T22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -897,12 +997,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lt for localTime"() {
         when:
         //where localTimeAttr < "11:11:11"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localTimeAttr": {"_lt": "11:11:11"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localTimeAttr": {"_lt": "11:11:11"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -915,7 +1017,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_lt for offsetDateTime"() {
 //        when:
 //        //where offsetDateTimeAttr < "2020-02-02T22:22:22"
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//              .withBearerAuth(adminToken)
+//              .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetDateTimeAttr": {"_lt": "2020-02-02T22:22:22+04:00"}}' +
@@ -931,7 +1035,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_lt for offsetTime"() {
 //        when:
 //        //where offsetTimeAttr < "11:11:11+04:00"
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//              .withBearerAuth (adminToken)
+//              .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetTimeAttr": {"_lt": "11:11:11+04:00"}}' +
@@ -944,15 +1050,17 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //                ']}}'
 //    }
 
-    def "_lte for numbers"() {
+def "_lte for numbers" () {
         when:
         //where capacity <= 50
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"capacity": {"_lte": "50"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"capacity": {"_lte": "50"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -969,12 +1077,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lte for date"() {
         when:
         //where dateAttr <= "2020-02-02"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateAttr": {"_lte": "2020-02-02"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateAttr": {"_lte": "2020-02-02"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -986,12 +1096,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lte for time"() {
         when:
         //where timeAttr <= "11:11:11"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"timeAttr": {"_lte": "11:11:11"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"timeAttr": {"_lte": "11:11:11"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1003,12 +1115,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lte for dateTime"() {
         when:
         //where dateTimeAttr <= "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateTimeAttr": {"_lte": "2020-02-02T22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateTimeAttr": {"_lte": "2020-02-02T22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1020,12 +1134,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lte for localDate"() {
         when:
         //where localDateAttr <= "2020-02-02"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateAttr": {"_lte": "2020-02-02"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateAttr": {"_lte": "2020-02-02"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1037,12 +1153,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lte for localDateTime"() {
         when:
         //where localDateTimeAttr <= "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateTimeAttr": {"_lte": "2020-02-02T22:22:22"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateTimeAttr": {"_lte": "2020-02-02T22:22:22"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1054,12 +1172,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lte for localTime"() {
         when:
         //where localTimeAttr <= "11:11:11"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localTimeAttr": {"_lte": "11:11:11"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localTimeAttr": {"_lte": "11:11:11"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1071,12 +1191,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_lte for offsetDateTime"() {
         when:
         //where offsetDateTimeAttr <= "2020-02-02T22:22:22"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"offsetDateTimeAttr": {"_lte": "2020-02-02T22:22:22+04:00"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"offsetDateTimeAttr": {"_lte": "2020-02-02T22:22:22+04:00"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1089,7 +1211,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_lte for offsetTime"() {
 //        when:
 //        //where offsetTimeAttr <= "11:11:11+04:00"
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//              .withBearerAuth(adminToken)
+//              .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetTimeAttr": {"_lte": "11:11:11+04:00"}}' +
@@ -1103,15 +1227,17 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //                ']}}'
 //    }
 
-    def "_contains for string with strict case"() {
+def "_contains for string with strict case" () {
         when:
         //where name like "%Hillwood%"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_contains": "Hillwood"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_contains": "Hillwood"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1122,12 +1248,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_contains for string with ignore case"() {
         when:
         //where name like "%hillwood%"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_contains": "hillwood"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_contains": "hillwood"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1138,12 +1266,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_notContains for string with strict case"() {
         when:
         //where name not like "%Hillwood%"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_notContains": "Hillwood"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_notContains": "Hillwood"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1162,12 +1292,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_notContains for string with ignore case"() {
         when:
         //where name not like "%hillwood%"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_notContains": "hillwood"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_notContains": "hillwood"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1186,12 +1318,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_startsWith for string with strict case"() {
         when:
         //where name like "Hil%"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_startsWith": "Hil"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_startsWith": "Hil"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1202,12 +1336,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_startsWith for string with ignore case"() {
         when:
         //where name like "hil%"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_startsWith": "hil"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_startsWith": "hil"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1218,12 +1354,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_endsWith for string with strict case"() {
         when:
         //where name like "%ity"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_endsWith": "ity"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_endsWith": "ity"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1234,12 +1372,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_endsWith for string with ignore case"() {
         when:
         //where name like "%ITY"
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_endsWith": "ITY"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_endsWith": "ITY"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1250,12 +1390,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_in for numbers"() {
         when:
         //where capacity in (50, 21, 7)
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"capacity": {"_in": ["50", "21", "7"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"capacity": {"_in": ["50", "21", "7"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1269,12 +1411,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_in for date"() {
         when:
         //where dateAttr in ("2020-02-02", "2020-03-03")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateAttr": {"_in": ["2020-02-02", "2020-03-03"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateAttr": {"_in": ["2020-02-02", "2020-03-03"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1286,12 +1430,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_in for dateTime"() {
         when:
         //where dateTimeAttr in ("2020-02-02T22:22:22", "2020-03-03T03:03:03")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateTimeAttr": {"_in": ["2020-02-02T22:22:22", "2020-03-03T03:03:03"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateTimeAttr": {"_in": ["2020-02-02T22:22:22", "2020-03-03T03:03:03"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1303,12 +1449,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_in for localDate"() {
         when:
         //where localDateAttr in ("2020-03-03", "2020-02-02")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateAttr": {"_in": ["2020-03-03", "2020-02-02"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateAttr": {"_in": ["2020-03-03", "2020-02-02"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1320,12 +1468,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_in for localDateTime"() {
         when:
         //where localDateTimeAttr in ("2020-02-02T22:22:22", "2020-01-01T11:11:11")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateTimeAttr": {"_in": ["2020-02-02T22:22:22", "2020-01-01T11:11:11"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateTimeAttr": {"_in": ["2020-02-02T22:22:22", "2020-01-01T11:11:11"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1339,7 +1489,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_in for offsetDateTime"() {
 //        when:
 //        //where offsetDateTimeAttr in ("2020-02-02T22:22:22+04:00", "2020-01-01T11:11:11+04:00")
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//              .withBearerAuth(adminToken)
+//              .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetDateTimeAttr": {"_in": ["2020-02-02T22:22:22+04:00", "2020-01-01T11:11:11+04:00"]}}' +
@@ -1353,15 +1505,17 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //                ']}}'
 //    }
 
-    def "_in for string with strict case"() {
+def "_in for string with strict case" () {
         when:
         //where name in ("Hillwood City", "Chez Paris")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_in": ["Hillwood City", "Chez Paris"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_in": ["Hillwood City", "Chez Paris"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1373,12 +1527,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_in for string with ignore case"() {
         when:
         //where name in ("hillwood city", "chez paris")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_in": ["hillwood city", "chez paris"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_in": ["hillwood city", "chez paris"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[]}}'
@@ -1387,12 +1543,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_in for UUID"() {
         when:
         //where id in ("bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"id": {"_in": ["bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"id": {"_in": ["bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1404,12 +1562,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_notIn for numbers"() {
         when:
         //where capacity not in (50, 21, 7)
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"capacity": {"_notIn": ["50", "21", "7"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"capacity": {"_notIn": ["50", "21", "7"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1425,12 +1585,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_notIn for date"() {
         when:
         //where dateAttr not in ("2020-02-02", "2020-03-03")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateAttr": {"_notIn": ["2020-02-02", "2020-03-03"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateAttr": {"_notIn": ["2020-02-02", "2020-03-03"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1441,12 +1603,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_notIn for dateTime"() {
         when:
         //where dateTimeAttr not in ("2020-02-02T22:22:22", "2020-03-03T03:03:03")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateTimeAttr": {"_notIn": ["2020-02-02T22:22:22", "2020-03-03T03:03:03"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateTimeAttr": {"_notIn": ["2020-02-02T22:22:22", "2020-03-03T03:03:03"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1457,12 +1621,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_notIn for localDate"() {
         when:
         //where localDateAttr in ("2020-03-03", "2020-02-02")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateAttr": {"_notIn": ["2020-03-03", "2020-02-02"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateAttr": {"_notIn": ["2020-03-03", "2020-02-02"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1473,12 +1639,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_notIn for localDateTime"() {
         when:
         //where localDateTimeAttr in ("2020-02-02T22:22:22", "2020-01-01T11:11:11")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateTimeAttr": {"_notIn": ["2020-02-02T22:22:22", "2020-01-01T11:11:11"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateTimeAttr": {"_notIn": ["2020-02-02T22:22:22", "2020-01-01T11:11:11"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1491,7 +1659,9 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //    def "_notIn for offsetDateTime"() {
 //        when:
 //        //where offsetDateTimeAttr not in ("2020-02-02T22:22:22+04:00", "2020-01-01T11:11:11+04:00")
-//        def response = graphQLTestTemplate.perform(
+//        def response = graphQLTestTemplate               
+//              .withBearerAuth(adminToken)
+//              .perform(
 //                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
 //                asObjectNode('{"filter": {"AND": [' +
 //                        '{"offsetDateTimeAttr": {"_notIn": ["2020-02-02T22:22:22+04:00", "2020-01-01T11:11:11+04:00"]}}' +
@@ -1504,15 +1674,17 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
 //                ']}}'
 //    }
 
-    def "_notIn for string with strict case"() {
+def "_notIn for string with strict case" () {
         when:
         //where name not in ("Hillwood City", "Chez Paris")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_notIn": ["Hillwood City", "Chez Paris"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_notIn": ["Hillwood City", "Chez Paris"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1530,12 +1702,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_notIn for string with ignore case"() {
         when:
         //where name not in ("hillwood city", "chez paris")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"name": {"_notIn": ["hillwood city", "chez paris"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"name": {"_notIn": ["hillwood city", "chez paris"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1555,12 +1729,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_notIn for UUID"() {
         when:
         //where id not in ("bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948")
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"id": {"_notIn": ["bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948"]}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-garage-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"id": {"_notIn": ["bfe41616-f03d-f287-1397-8619f5dde390", "2094170e-5739-43bd-ed5c-783c949c9948"]}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_GarageList":[' +
@@ -1578,12 +1754,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for numbers"() {
         when:
         //where integerAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"integerAttr": {"_isNull": "true"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"integerAttr": {"_isNull": "true"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1594,12 +1772,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for date"() {
         when:
         //where dateAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateAttr": {"_isNull": true}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateAttr": {"_isNull": true}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1610,12 +1790,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for time"() {
         when:
         //where timeAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"timeAttr": {"_isNull": true}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"timeAttr": {"_isNull": true}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1626,12 +1808,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for dateTime"() {
         when:
         //where dateTimeAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateTimeAttr": {"_isNull": true}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateTimeAttr": {"_isNull": true}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1642,12 +1826,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for localDate"() {
         when:
         //where localDateAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateAttr": {"_isNull": true}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateAttr": {"_isNull": true}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1658,12 +1844,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for localDateTime"() {
         when:
         //where localDateTimeAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateTimeAttr": {"_isNull": true}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateTimeAttr": {"_isNull": true}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1674,12 +1862,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for localTime"() {
         when:
         //where localTimeAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localTimeAttr": {"_isNull": true}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localTimeAttr": {"_isNull": true}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1690,12 +1880,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for offsetDateTime"() {
         when:
         //where offsetDateTimeAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"offsetDateTimeAttr": {"_isNull": true}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"offsetDateTimeAttr": {"_isNull": true}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1706,12 +1898,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for offsetTime"() {
         when:
         //where offsetTimeAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"offsetTimeAttr": {"_isNull": true}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"offsetTimeAttr": {"_isNull": true}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1722,12 +1916,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for string"() {
         when:
         //where stringAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"stringAttr": {"_isNull": "true"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"stringAttr": {"_isNull": "true"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1738,12 +1934,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for boolean"() {
         when:
         //where booleanAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"booleanAttr": {"_isNull": "true"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"booleanAttr": {"_isNull": "true"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1755,12 +1953,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (true) for UUID"() {
         when:
         //where uuidAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"uuidAttr": {"_isNull": "true"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"uuidAttr": {"_isNull": "true"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1771,12 +1971,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for numbers"() {
         when:
         //where integerAttr is not null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"integerAttr": {"_isNull": "false"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"integerAttr": {"_isNull": "false"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1789,12 +1991,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for date"() {
         when:
         //where dateAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateAttr": {"_isNull": false}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateAttr": {"_isNull": false}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1807,12 +2011,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for time"() {
         when:
         //where timeAttr is not null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"timeAttr": {"_isNull": false}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"timeAttr": {"_isNull": false}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1825,12 +2031,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for dateTime"() {
         when:
         //where dateTimeAttr is not null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"dateTimeAttr": {"_isNull": false}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"dateTimeAttr": {"_isNull": false}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1843,12 +2051,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for localDate"() {
         when:
         //where localDateAttr is not null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateAttr": {"_isNull": false}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateAttr": {"_isNull": false}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1861,12 +2071,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for localDateTime"() {
         when:
         //where localDateTimeAttr is not null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localDateTimeAttr": {"_isNull": false}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localDateTimeAttr": {"_isNull": false}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1879,12 +2091,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for localTime"() {
         when:
         //where localTimeAttr is null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"localTimeAttr": {"_isNull": false}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"localTimeAttr": {"_isNull": false}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1897,12 +2111,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for offsetDateTime"() {
         when:
         //where offsetDateTimeAttr is not null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"offsetDateTimeAttr": {"_isNull": false}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"offsetDateTimeAttr": {"_isNull": false}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1915,12 +2131,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for offsetTime"() {
         when:
         //where offsetTimeAttr is not null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"offsetTimeAttr": {"_isNull": false}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"offsetTimeAttr": {"_isNull": false}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1933,12 +2151,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for string"() {
         when:
         //where stringAttr is not null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"stringAttr": {"_isNull": "false"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"stringAttr": {"_isNull": "false"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1951,12 +2171,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for boolean"() {
         when:
         //where booleanAttr is not null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"booleanAttr": {"_isNull": "false"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"booleanAttr": {"_isNull": "false"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +
@@ -1968,12 +2190,14 @@ class FilterIntegrationTest extends AbstractGraphQLTest {
     def "_isNull (false) for UUID"() {
         when:
         //where uuidAttr is not null
-        def response = graphQLTestTemplate.perform(
-                "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '{"uuidAttr": {"_isNull": "false"}}' +
-                        ']}}')
-        )
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
+                        "graphql/io/jmix/graphql/datafetcher/query-datatypesTestEntity-with-filter.graphql",
+                        asObjectNode('{"filter": {"AND": [' +
+                                '{"uuidAttr": {"_isNull": "false"}}' +
+                                ']}}')
+                )
 
         then:
         getBody(response) == '{"data":{"scr_DatatypesTestEntityList":[' +

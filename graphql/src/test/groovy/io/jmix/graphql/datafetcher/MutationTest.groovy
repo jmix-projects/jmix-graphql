@@ -35,7 +35,9 @@ class MutationTest extends AbstractGraphQLTest {
 
     def "should create new Car instance and return additional fetched attributes and _instanceName"() {
         when:
-        def response = graphQLTestTemplate.perform(
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
                 "graphql/io/jmix/graphql/datafetcher/upsert-car-return-instance-name.gql", asObjectNode("{\"id\":\"$id1\"}"))
         then:
         response.get('$.data.upsert_scr_Car._instanceName') == "TESLA - Z"
@@ -45,7 +47,9 @@ class MutationTest extends AbstractGraphQLTest {
 
     def "should create new Car instance and return additional fetched attributes without _instanceName"() {
         when:
-        def response = graphQLTestTemplate.perform(
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
                 "graphql/io/jmix/graphql/datafetcher/upsert-car.gql", asObjectNode("{\"id\":\"$id2\"}"))
         then:
         response.get('$.data.upsert_scr_Car.garage') == null

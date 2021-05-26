@@ -27,8 +27,9 @@ class SortingTest extends AbstractGraphQLTest {
 
     def "default sorting by lastModifiedDate is enabled without any sorting"() {
         when:
-        def response = graphQLTestTemplate.postForResource("graphql/io/jmix/graphql/schema/cars-without-sorting.graphql")
-//        println "response = $response.rawResponse"
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .postForResource("graphql/io/jmix/graphql/schema/cars-without-sorting.graphql")
 
         then:
         response.rawResponse.body == '{"data":{"scr_CarList":[' +
@@ -59,10 +60,11 @@ class SortingTest extends AbstractGraphQLTest {
 
     def "default sorting by lastModifiedDate is disabled when it's already sorted"() {
         when:
-        def response = graphQLTestTemplate.postForResource(
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .postForResource(
                 "graphql/io/jmix/graphql/schema/cars-with-sorting-by-manufacturer.graphql"
         )
-//        println "response = $response.rawResponse"
 
         then:
         response.rawResponse.body == '{"data":{"scr_CarList":[' +

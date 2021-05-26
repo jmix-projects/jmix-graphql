@@ -24,7 +24,9 @@ class FilterConditionCompositionTest extends AbstractGraphQLTest {
     def "filter conditions union - default (AND)"() {
         when:
         //where capacity = 50
-        def response = graphQLTestTemplate.perform(
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
                 "graphql/io/jmix/graphql/datafetcher/query-cars.gql",
                asObjectNode('{"filter": [' +
                        '  {"price": {"_lte": "30"}},' +
@@ -44,7 +46,9 @@ class FilterConditionCompositionTest extends AbstractGraphQLTest {
     def "filter conditions union by AND"() {
         when:
         //where capacity = 50
-        def response = graphQLTestTemplate.perform(
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
                 "graphql/io/jmix/graphql/datafetcher/query-cars.gql",
                asObjectNode('{"filter": {"AND": [' +
                        '  {"price": {"_lte": "30"}},' +
@@ -64,7 +68,9 @@ class FilterConditionCompositionTest extends AbstractGraphQLTest {
     def "filter conditions union by OR"() {
         when:
         //where capacity = 50
-        def response = graphQLTestTemplate.perform(
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .perform(
                 "graphql/io/jmix/graphql/datafetcher/query-cars.gql",
                asObjectNode('{"filter": {"OR": [' +
                        '  {"price": {"_lte": "10"}},' +

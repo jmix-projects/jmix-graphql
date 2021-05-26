@@ -17,6 +17,8 @@
 package io.jmix.graphql
 
 import io.jmix.core.DataManager
+import io.jmix.core.security.SystemAuthenticator
+import io.jmix.security.role.ResourceRoleRepository
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.entity.Car
 import test_support.entity.CarType
@@ -25,7 +27,20 @@ import test_support.entity.Garage
 class DataInitializedTest extends AbstractGraphQLTest {
 
     @Autowired
+    SystemAuthenticator authenticator
+    @Autowired
+    ResourceRoleRepository roleRepository
+
+    @Autowired
     private DataManager dataManager
+
+    void setup() {
+        authenticator.begin("admin")
+    }
+
+    void cleanup() {
+        authenticator.end()
+    }
 
     def "data is initialized"() {
         given:

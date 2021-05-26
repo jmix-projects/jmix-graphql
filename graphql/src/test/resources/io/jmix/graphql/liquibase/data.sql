@@ -1,4 +1,4 @@
-INSERT INTO scr_garage (id, name, address, capacity, van_entry, working_hours_from, working_hours_to)
+INSERT INTO public.scr_garage (id, name, address, capacity, van_entry, working_hours_from, working_hours_to)
 VALUES
 ('d99d468e-3cc0-01da-295e-595e48fec620', 'P.S. 118', 'Apt. 996 006 Grant Passage, North Bennymouth, NJ 82878-0684', 56, true, '11:11:00', '22:22:00'),
 ('bfe41616-f03d-f287-1397-8619f5dde390', 'Big Bob''s Beeper Emporium', '9943 Anderson Rest, South Marcelo, OH 85224', 50, false, '10:00:00', '20:00:00'),

@@ -26,8 +26,9 @@ class ServletStartedTest extends AbstractGraphQLTest {
 
     def "graphql servlet started"() {
         when:
-        def response = graphQLTestTemplate.postForResource("graphql/schema-description.graphql")
-//        println "response = $response.rawResponse"
+        def response = graphQLTestTemplate
+                .withBearerAuth(adminToken)
+                .postForResource("graphql/schema-description.graphql")
 
         then:
         response.rawResponse.body == '{"data":{"__schema":{"description":null}}}'
