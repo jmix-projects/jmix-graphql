@@ -98,12 +98,12 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
                 .findAny()
                 .orElseGet(() -> "" + cv.getPropertyPath());
 
-        return composeErrorExtension(
-                cv.getMessageTemplate(),
-                cv.getMessage(),
-                pathStr,
-                "" + cv.getInvalidValue()
-        );
+        Map<String, Object> errorMap = new HashMap<>();
+        errorMap.put("messageTemplate", cv.getMessageTemplate());
+        errorMap.put("message", cv.getMessage());
+        errorMap.put("path", pathStr);
+        errorMap.put("invalidValue", "" + cv.getInvalidValue());
+        return errorMap;
     }
 
     protected Stream<String> composeErrorExtension(MetaClass metaClass, ConstraintViolation<?> cv, String path) {
@@ -131,12 +131,4 @@ public class GqlEntityValidationException extends RuntimeException implements Gr
                 });
     }
 
-    protected Map<String, Object> composeErrorExtension(String messageTemplate, String message, String path, String invalidValue) {
-        Map<String, Object> cv = new HashMap<>();
-        cv.put("messageTemplate", messageTemplate);
-        cv.put("message", message);
-        cv.put("path", path);
-        cv.put("invalidValue", invalidValue);
-        return cv;
-    }
 }
