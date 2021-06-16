@@ -7,17 +7,24 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.graphql.NamingUtils;
+import io.jmix.graphql.annotation.GraphqlLoader;
+import io.jmix.graphql.loader.GraphqlEntityCountLoader;
+import io.jmix.graphql.loader.GraphqlEntityListLoader;
+import io.jmix.graphql.loader.GraphqlEntityLoader;
 import io.jmix.graphql.schema.Types;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +34,18 @@ public class EntityQueryDataFetcher {
     public static final int DEFAULT_MAX_RESULTS = 100;
 
     private final Logger log = LoggerFactory.getLogger(EntityQueryDataFetcher.class);
+
+    private Map<Class<?>, Object> countLoaders;
+
+    private Map<Class<?>, Object> entityLoaders;
+
+    private Map<Class<?>, Object> entitiesLoaders;
+
+    private static final String GRAPHQL_ENTITY_LOADER_METHOD_NAME = GraphqlEntityLoader.class.getDeclaredMethods()[0].getName();
+
+    private static final String GRAPHQL_ENTITIES_LOADER_METHOD_NAME = GraphqlEntityListLoader.class.getDeclaredMethods()[0].getName();
+
+    private static final String GRAPHQL_COUNT_LOADER_METHOD_NAME = GraphqlEntityCountLoader.class.getDeclaredMethods()[0].getName();
 
     @Autowired
     ResponseBuilder responseBuilder;
@@ -42,6 +61,8 @@ public class EntityQueryDataFetcher {
     protected EnvironmentUtils environmentUtils;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    private ListableBeanFactory listableBeanFactory;
 
     public DataFetcher<?> loadEntity(MetaClass metaClass) {
         return environment -> {
@@ -56,10 +77,17 @@ public class EntityQueryDataFetcher {
             lc.setFetchPlan(fetchPlan);
 
             log.debug("loadEntity: with context {}", lc);
-            Object entity = dataManager.load(lc);
-            if (entity == null) return null;
+            if(!entityLoaders.containsKey(metaClass.getClass())) {
+                Object entity = dataManager.load(lc);
+                if (entity == null) return null;
 
-            return responseBuilder.buildResponse((Entity) entity, fetchPlan, metaClass, environmentUtils.getDotDelimitedProps(environment));
+                return responseBuilder.buildResponse((Entity) entity, fetchPlan, metaClass, environmentUtils.getDotDelimitedProps(environment));
+            } else {
+                Object bean = entityLoaders.get(metaClass.getClass());
+                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITY_LOADER_METHOD_NAME, LoadContext.class);
+                return responseBuilder.buildResponse((Entity) method.invoke(bean, lc), fetchPlan, metaClass,
+                        environmentUtils.getDotDelimitedProps(environment));
+            }
         };
     }
 
@@ -103,8 +131,14 @@ public class EntityQueryDataFetcher {
             LoadContext<Object> ctx = new LoadContext<>(metaClass);
             ctx.setQuery(query);
             ctx.setFetchPlan(fetchPan);
-            List<Object> objects = dataManager.loadList(ctx);
-
+            List<Object> objects;
+            if(!entitiesLoaders.containsKey(metaClass.getClass())) {
+                objects = dataManager.loadList(ctx);
+            } else {
+                Object bean = entitiesLoaders.get(metaClass.getClass());
+                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITIES_LOADER_METHOD_NAME, LoadContext.class);
+                objects = (List<Object>) method.invoke(bean, ctx);
+            }
             Set<String> props = environmentUtils.getDotDelimitedProps(environment);
             List<Map<String, Object>> entitiesAsMap = objects.stream()
                     .map(e -> responseBuilder.buildResponse((Entity) e, fetchPan, metaClass, props))
@@ -168,7 +202,14 @@ public class EntityQueryDataFetcher {
 
             LoadContext<? extends Entity> lc = new LoadContext<>(metaClass);
             lc.setQuery(query);
-            long count = dataManager.getCount(lc);
+            long count;
+            if(!countLoaders.containsKey(metaClass.getClass())) {
+                count = dataManager.getCount(lc);
+            } else {
+                Object bean = countLoaders.get(metaClass.getClass());
+                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_COUNT_LOADER_METHOD_NAME, LoadContext.class);
+                count = (Long) method.invoke(bean, lc);
+            }
             log.debug("countEntities return {} for {}", count, metaClass.getName());
             return count;
         };
@@ -217,5 +258,41 @@ public class EntityQueryDataFetcher {
         }
 
         return query;
+    }
+
+    @PostConstruct
+    protected void initCustomLoader() {
+        countLoaders = new HashMap<>();
+        entityLoaders = new HashMap<>();
+        entitiesLoaders = new HashMap<>();
+        Map<String, Object> loaders = listableBeanFactory
+                .getBeansWithAnnotation(GraphqlLoader.class);
+        for(Object loader: loaders.values()) {
+           if(loader instanceof GraphqlEntityCountLoader) {
+               Method[] methods = loader.getClass().getDeclaredMethods();
+               for(Method method: methods) {
+                   if(method.getName().equals(GRAPHQL_COUNT_LOADER_METHOD_NAME)) {
+                       countLoaders.put(method.getReturnType(), loader);
+                   }
+               }
+           }
+           if(loader instanceof GraphqlEntityListLoader) {
+                Method[] methods = loader.getClass().getDeclaredMethods();
+                for(Method method: methods) {
+                    if(method.getName().equals(GRAPHQL_ENTITIES_LOADER_METHOD_NAME)) {
+                        entitiesLoaders.put(method.getReturnType(), loader);
+                    }
+                }
+           }
+            if(loader instanceof GraphqlEntityLoader) {
+                Method[] methods = loader.getClass().getDeclaredMethods();
+                for(Method method: methods) {
+                    if(method.getName().equals(GRAPHQL_ENTITY_LOADER_METHOD_NAME)) {
+                        entityLoaders.put(method.getReturnType(), loader);
+                    }
+                }
+            }
+        }
+
     }
 }
