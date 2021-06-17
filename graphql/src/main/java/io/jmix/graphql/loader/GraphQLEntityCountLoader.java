@@ -18,7 +18,9 @@ package io.jmix.graphql.loader;
 
 import io.jmix.core.LoadContext;
 
+import java.util.List;
+
 @FunctionalInterface
-public interface GraphqlEntityLoader<E> {
-    E loadEntity(LoadContext<E> context);
+public interface GraphQLEntityCountLoader<E> {
+    Long loadCount(LoadContext<E> context);
 }
