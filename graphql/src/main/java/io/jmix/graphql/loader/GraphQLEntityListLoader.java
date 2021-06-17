@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.annotation;
+package io.jmix.graphql.loader;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import io.jmix.core.LoadContext;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface GraphqlLoader {
+import java.util.List;
+
+@FunctionalInterface
+public interface GraphQLEntityListLoader<E> {
+    List<E> loadEntityList(LoadContext<E> context);
 }
