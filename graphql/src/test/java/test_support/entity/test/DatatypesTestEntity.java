@@ -160,6 +160,10 @@ public class DatatypesTestEntity {
         this.timeAttr = timeAttr;
     }
 
+    public void setTimeAttr(Date timeAttr) {
+        this.timeAttr = new Time(timeAttr.getTime());
+    }
+
     public String getReadOnlyStringAttr() {
         return readOnlyStringAttr;
     }

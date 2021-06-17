@@ -39,7 +39,6 @@ import spock.lang.Specification
 import test_support.App
 import test_support.RestTestUtils
 
-
 @SpringBootTest(classes = App, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AbstractGraphQLTest extends Specification {
 
@@ -52,6 +51,8 @@ class AbstractGraphQLTest extends Specification {
     ResourceRoleRepository resourceRoleRepository
     @Autowired
     InMemoryUserRepository userRepository
+    @Autowired
+    ObjectMapper objectMapper
 
     protected TransactionTemplate transaction
     protected String adminToken

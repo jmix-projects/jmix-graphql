@@ -38,7 +38,33 @@ class MutationValidationTest extends AbstractGraphQLTest {
     def "should throw exception while creating new DatatypesTestEntity with read-only attributes"() {
         when:
         def response = query(
-                "datafetcher/upsert-datatypes-test-entity.graphql")
+                "datafetcher/upsert-datatypes-test-entity.graphql",
+                asObjectNode('{"entity":{' +
+                        '"bigDecimalAttr": 11111,' +
+                        '"booleanAttr": null,' +
+                        '"dateAttr": null,' +
+                        '"dateTimeAttr":null,' +
+                        '"doubleAttr":null,' +
+                        '"integerAttr":null,' +
+                        '"longAttr":null,' +
+                        '"stringAttr":null,' +
+                        '"timeAttr":null,' +
+                        '"uuidAttr":null,' +
+                        '"localDateTimeAttr":null,' +
+                        '"offsetDateTimeAttr":null,' +
+                        '"localDateAttr":null,' +
+                        '"localTimeAttr":null,' +
+                        '"offsetTimeAttr":null,' +
+                        '"enumAttr":null,' +
+                        '"associationO2Oattr":null,' +
+                        '"associationM2Oattr":null,' +
+                        '"associationM2Mattr":[],' +
+                        '"intIdentityIdTestEntityAssociationO2OAttr":null,' +
+                        '"integerIdTestEntityAssociationM2MAttr":[],' +
+                        '"datatypesTestEntity3":null,' +
+                        '"name":null,' +
+                        '"readOnlyStringAttr":"read-only",' +
+                        '"id":"6a538099-9dfd-8761-fa32-b496c236dbe8"}}'))
         def error = getErrors(response)[0].getAsJsonObject()
 
         then:

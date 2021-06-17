@@ -16,10 +16,10 @@
 
 package io.jmix.graphql.datafetcher
 
-
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.TestPropertySource
+import spock.lang.Ignore
 import test_support.entity.CarType
 
 @DirtiesContext
@@ -59,4 +59,58 @@ class MutationTest extends AbstractGraphQLTest {
         response.get('$.data.upsert_scr_Car.purchaseDate') == null
     }
 
+    def "should create datatypes test entity"() {
+        when:
+        def response = query(
+                "datafetcher/upsert-datatypes-test-entity.graphql",
+                asObjectNode("""{
+                "entity":{
+                    "dateAttr": "2021-01-01",
+                    "dateTimeAttr":"2011-12-03T10:15:30",
+                    "timeAttr":"10:33:12",
+                    "localDateTimeAttr":"2021-06-06T12:31:00",
+                    "localDateAttr":"2021-01-01",
+                    "localTimeAttr":"10:33:12",
+                    "offsetTimeAttr":"10:33:12+04:00",
+                    "id":"6a538099-9dfd-8761-fa32-b496c236dbe9"
+                }}"""))
+
+        then:
+        getBody(response) == '{"data":{"upsert_scr_DatatypesTestEntity":{' +
+                '"id":"6a538099-9dfd-8761-fa32-b496c236dbe9",' +
+                '"dateAttr":"2021-01-01",' +
+                '"dateTimeAttr":"2011-12-03T10:15:30",' +
+                '"timeAttr":"10:33:12",' +
+                '"localDateTimeAttr":"2021-06-06T12:31:00",' +
+                '"offsetDateTimeAttr":null,' +
+                '"localDateAttr":"2021-01-01",' +
+                '"localTimeAttr":"10:33:12",' +
+                '"offsetTimeAttr":"10:33:12+04:00"' +
+                '}}}'
+    }
+
+    @Ignore
+    def "should create datatypes test entity with OffsetDateTime attribute"() {
+        when:
+        def response = query(
+                "datafetcher/upsert-datatypes-test-entity.graphql",
+                asObjectNode("""{
+                "entity":{
+                    "offsetDateTimeAttr": "2011-12-03T11:15:30+04:00",
+                    "id":"6a538099-9dfd-8761-fa32-b496c236dbe9"
+                }}"""))
+
+        then:
+        getBody(response) == '{"data":{"upsert_scr_DatatypesTestEntity":{' +
+                '"id":"6a538099-9dfd-8761-fa32-b496c236dbe9",' +
+                '"dateAttr":null,' +
+                '"dateTimeAttr":null,' +
+                '"timeAttr":null,' +
+                '"localDateTimeAttr":null,' +
+                '"offsetDateTimeAttr":"2011-12-03T11:15:30+04:00",' +
+                '"localDateAttr":null,' +
+                '"localTimeAttr":null,' +
+                '"offsetTimeAttr":null' +
+                '}}}'
+    }
 }
