@@ -113,7 +113,7 @@ public class EntityMutationDataFetcher {
     }
 
     public DataFetcher<?> deleteEntity(MetaClass metaClass) {
-        Map<Class<?>, Object> entityRemover = getCustomEntityUpdater();
+        Map<Class<?>, Object> entityRemover = getCustomEntityRemover();
         return environment -> {
             try {
                 checkCanDeleteEntity(metaClass);
