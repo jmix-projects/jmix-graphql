@@ -285,12 +285,6 @@ public class EntityQueryDataFetcher {
                     ParameterizedType type = (ParameterizedType) Arrays.stream(loader.getClass().getGenericInterfaces())
                             .filter(t -> t.getTypeName().startsWith(GraphQLEntityListLoader.class.getName())).findFirst().get();
                     entitiesLoaders.put((Class<?>) type.getActualTypeArguments()[0], loader);
-//                    Method[] methods = loader.getClass().getDeclaredMethods();
-//                    for (Method method : methods) {
-//                        if (method.getName().equals(GRAPHQL_ENTITIES_LOADER_METHOD_NAME)) {
-//                            entitiesLoaders.put(method.getReturnType(), loader);
-//                        }
-//                    }
                 }
             }
         }
@@ -307,16 +301,9 @@ public class EntityQueryDataFetcher {
                     ParameterizedType type = (ParameterizedType) Arrays.stream(loader.getClass().getGenericInterfaces())
                             .filter(t -> t.getTypeName().startsWith(GraphQLEntityLoader.class.getName())).findFirst().get();
                     entityLoaders.put((Class<?>) type.getActualTypeArguments()[0], loader);
-//                    Method[] methods = loader.getClass().getDeclaredMethods();
-//                    for (Method method : methods) {
-//                        if (method.getName().equals(GRAPHQL_ENTITY_LOADER_METHOD_NAME)) {
-//                            entityLoaders.put(method.getReturnType(), loader);
-//                        }
-//                    }
                 }
             }
         }
         return entityLoaders;
-
     }
 }

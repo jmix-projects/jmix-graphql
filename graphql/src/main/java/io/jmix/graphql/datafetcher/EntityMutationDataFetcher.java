@@ -11,12 +11,20 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.validation.EntityValidationException;
 import io.jmix.graphql.NamingUtils;
+import io.jmix.graphql.annotation.GraphQLModifier;
+import io.jmix.graphql.loader.GraphQLEntityListLoader;
+import io.jmix.graphql.loader.GraphQLEntityLoader;
+import io.jmix.graphql.loader.GraphQLEntityRemover;
+import io.jmix.graphql.loader.GraphQLEntityUpdater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.PersistenceException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,10 +53,20 @@ public class EntityMutationDataFetcher {
     private EnvironmentUtils environmentUtils;
     @Autowired
     private AccessManager accessManager;
+    @Autowired
+    private ListableBeanFactory listableBeanFactory;
 
+    private static Map<Class<?>, Object> entityUpdater;
+
+    private static Map<Class<?>, Object> entityRemover;
+
+    private static final String GRAPHQL_ENTITY_REMOVER_METHOD_NAME = GraphQLEntityRemover.class.getDeclaredMethods()[0].getName();
+
+    private static final String GRAPHQL_ENTITIES_UPDATER_METHOD_NAME = GraphQLEntityUpdater.class.getDeclaredMethods()[0].getName();
 
     // todo batch commit with association not supported now (not transferred from cuba-graphql)
     public DataFetcher<?> upsertEntity(MetaClass metaClass) {
+        Map<Class<?>, Object> entityUpdater = getCustomEntityUpdater();
         return environment -> {
 
             Class<Object> javaClass = metaClass.getJavaClass();
@@ -80,7 +98,14 @@ public class EntityMutationDataFetcher {
             if (!entityStates.isLoadedWithFetchPlan(mainEntity, fetchPlan)) {
                 LoadContext loadContext = new LoadContext(metaClass).setFetchPlan(fetchPlan);
                 loadContext.setId(EntityValues.getId(mainEntity));
-                mainEntity = dataManager.load(loadContext);
+                if(!entityUpdater.containsKey(metaClass.getJavaClass())) {
+                    mainEntity = dataManager.load(loadContext);
+                } else {
+                    Object bean = entityUpdater.get(metaClass.getJavaClass());
+                    Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITIES_UPDATER_METHOD_NAME,
+                            LoadContext.class);
+                    mainEntity = method.invoke(bean, loadContext);
+                }
             }
 
             return responseBuilder.buildResponse((Entity) mainEntity, fetchPlan, metaClass, environmentUtils.getDotDelimitedProps(environment));
@@ -88,6 +113,7 @@ public class EntityMutationDataFetcher {
     }
 
     public DataFetcher<?> deleteEntity(MetaClass metaClass) {
+        Map<Class<?>, Object> entityRemover = getCustomEntityUpdater();
         return environment -> {
             try {
                 checkCanDeleteEntity(metaClass);
@@ -98,7 +124,13 @@ public class EntityMutationDataFetcher {
             UUID id = UUID.fromString(environment.getArgument("id"));
             log.debug("deleteEntity: id {}", id);
             Id<?> entityId = Id.of(id, metaClass.getJavaClass());
-            dataManager.remove(entityId);
+            if(!entityRemover.containsKey(metaClass.getJavaClass())) {
+                dataManager.remove(entityId);
+            } else {
+                Object bean = entityRemover.get(metaClass.getJavaClass());
+                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITY_REMOVER_METHOD_NAME, Id.class);
+                method.invoke(bean, entityId);
+            }
             return null;
         };
     }
@@ -152,6 +184,38 @@ public class EntityMutationDataFetcher {
         if (!excludedProperties.isEmpty()) {
             throw new GqlEntityValidationException("Modifying attributes is forbidden " + excludedProperties);
         }
+
     }
 
+    protected Map<Class<?>, Object> getCustomEntityRemover() {
+        if (entityRemover == null) {
+            entityRemover = new HashMap<>();
+            Map<String, Object> removers = listableBeanFactory
+                    .getBeansWithAnnotation(GraphQLModifier.class);
+            for (Object remover : removers.values()) {
+                if (remover instanceof GraphQLEntityRemover) {
+                    ParameterizedType type = (ParameterizedType) Arrays.stream(remover.getClass().getGenericInterfaces())
+                            .filter(t -> t.getTypeName().startsWith(GraphQLEntityRemover.class.getName())).findFirst().get();
+                    entityRemover.put((Class<?>) type.getActualTypeArguments()[0], remover);
+                }
+            }
+        }
+        return entityRemover;
+    }
+
+    protected Map<Class<?>, Object> getCustomEntityUpdater() {
+        if (entityUpdater == null) {
+            entityUpdater = new HashMap<>();
+            Map<String, Object> removers = listableBeanFactory
+                    .getBeansWithAnnotation(GraphQLModifier.class);
+            for (Object remover : removers.values()) {
+                if (remover instanceof GraphQLEntityUpdater) {
+                    ParameterizedType type = (ParameterizedType) Arrays.stream(remover.getClass().getGenericInterfaces())
+                            .filter(t -> t.getTypeName().startsWith(GraphQLEntityUpdater.class.getName())).findFirst().get();
+                    entityUpdater.put((Class<?>) type.getActualTypeArguments()[0], remover);
+                }
+            }
+        }
+        return entityUpdater;
+    }
 }
