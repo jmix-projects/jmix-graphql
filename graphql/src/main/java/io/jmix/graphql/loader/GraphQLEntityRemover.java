@@ -16,9 +16,10 @@
 
 package io.jmix.graphql.loader;
 
+import io.jmix.core.Id;
 import io.jmix.core.LoadContext;
 
 @FunctionalInterface
-public interface GraphQLEntityCountLoader<E> {
-    Long loadCount(LoadContext<E> context);
+public interface GraphQLEntityRemover<E> {
+    void deleteEntity(Id<E> entityId);
 }
