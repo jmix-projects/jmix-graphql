@@ -16,11 +16,9 @@
 
 package io.jmix.graphql.loader;
 
-import io.jmix.core.LoadContext;
-
 import java.util.List;
 
 @FunctionalInterface
 public interface GraphQLEntityListLoader<E> {
-    List<E> loadEntityList(LoadContext<E> context);
+    List<E> loadEntityList(GraphQLListLoaderContext<E> context);
 }

@@ -16,9 +16,9 @@
 
 package io.jmix.graphql.updater;
 
-import io.jmix.core.LoadContext;
+import java.util.Collection;
 
 @FunctionalInterface
 public interface GraphQLUpdater<E> {
-    E getUpsertResult(LoadContext<E> context);
+    Collection<Object> importEntities(GraphQLUpdaterContext<E> context);
 }

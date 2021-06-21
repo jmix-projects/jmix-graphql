@@ -16,6 +16,43 @@
 
 package io.jmix.graphql.loader;
 
-public class GraphQLEntityCountLoaderContext {
+import io.jmix.core.LoadContext;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.querycondition.LogicalCondition;
 
+public class GraphQLEntityCountLoaderContext<E> {
+
+    private LoadContext<E> loadContext;
+    private LogicalCondition filter;
+    private MetaClass metaClass;
+
+    public GraphQLEntityCountLoaderContext(MetaClass metaClass, LoadContext<E> loadContext, LogicalCondition filter) {
+        this.loadContext = loadContext;
+        this.filter = filter;
+        this.metaClass = metaClass;
+    }
+
+    public LoadContext<E> getLoadContext() {
+        return loadContext;
+    }
+
+    public void setLoadContext(LoadContext<E> loadContext) {
+        this.loadContext = loadContext;
+    }
+
+    public LogicalCondition getFilter() {
+        return filter;
+    }
+
+    public void setFilter(LogicalCondition filter) {
+        this.filter = filter;
+    }
+
+    public MetaClass getMetaClass() {
+        return metaClass;
+    }
+
+    public void setMetaClass(MetaClass metaClass) {
+        this.metaClass = metaClass;
+    }
 }
