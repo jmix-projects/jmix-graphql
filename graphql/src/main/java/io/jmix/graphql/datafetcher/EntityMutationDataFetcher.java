@@ -12,10 +12,8 @@ import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.validation.EntityValidationException;
 import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.annotation.GraphQLModifier;
-import io.jmix.graphql.loader.GraphQLEntityListLoader;
-import io.jmix.graphql.loader.GraphQLEntityLoader;
-import io.jmix.graphql.loader.GraphQLEntityRemover;
-import io.jmix.graphql.loader.GraphQLEntityUpdater;
+import io.jmix.graphql.updater.GraphQLEntityRemover;
+import io.jmix.graphql.updater.GraphQLUpsertResultGetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -62,7 +60,7 @@ public class EntityMutationDataFetcher {
 
     private static final String GRAPHQL_ENTITY_REMOVER_METHOD_NAME = GraphQLEntityRemover.class.getDeclaredMethods()[0].getName();
 
-    private static final String GRAPHQL_ENTITIES_UPDATER_METHOD_NAME = GraphQLEntityUpdater.class.getDeclaredMethods()[0].getName();
+    private static final String GRAPHQL_ENTITIES_UPDATER_METHOD_NAME = GraphQLUpsertResultGetter.class.getDeclaredMethods()[0].getName();
 
     // todo batch commit with association not supported now (not transferred from cuba-graphql)
     public DataFetcher<?> upsertEntity(MetaClass metaClass) {
@@ -209,9 +207,9 @@ public class EntityMutationDataFetcher {
             Map<String, Object> removers = listableBeanFactory
                     .getBeansWithAnnotation(GraphQLModifier.class);
             for (Object remover : removers.values()) {
-                if (remover instanceof GraphQLEntityUpdater) {
+                if (remover instanceof GraphQLUpsertResultGetter) {
                     ParameterizedType type = (ParameterizedType) Arrays.stream(remover.getClass().getGenericInterfaces())
-                            .filter(t -> t.getTypeName().startsWith(GraphQLEntityUpdater.class.getName())).findFirst().get();
+                            .filter(t -> t.getTypeName().startsWith(GraphQLUpsertResultGetter.class.getName())).findFirst().get();
                     entityUpdater.put((Class<?>) type.getActualTypeArguments()[0], remover);
                 }
             }

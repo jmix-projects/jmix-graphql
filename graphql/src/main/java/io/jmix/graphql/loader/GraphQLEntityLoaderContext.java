@@ -16,9 +16,6 @@
 
 package io.jmix.graphql.loader;
 
-import io.jmix.core.LoadContext;
+public class GraphQLEntityLoaderContext {
 
-@FunctionalInterface
-public interface GraphQLEntityUpdater<E> {
-    E upsertEntity(LoadContext<E> context);
 }

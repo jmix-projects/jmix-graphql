@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.loader;
+package io.jmix.graphql.updater;
 
-import io.jmix.core.Id;
 import io.jmix.core.LoadContext;
 
 @FunctionalInterface
-public interface GraphQLEntityRemover<E> {
-    void deleteEntity(Id<E> entityId);
+public interface GraphQLUpsertResultGetter<E> {
+    E getUpsertResult(LoadContext<E> context);
 }
