@@ -13,7 +13,11 @@ import io.jmix.core.validation.EntityValidationException;
 import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.annotation.GraphQLModifier;
 import io.jmix.graphql.updater.GraphQLEntityRemover;
+import io.jmix.graphql.updater.GraphQLEntityRemoverContext;
+import io.jmix.graphql.updater.GraphQLUpdater;
+import io.jmix.graphql.updater.GraphQLUpdaterContext;
 import io.jmix.graphql.updater.GraphQLUpsertResultGetter;
+import io.jmix.graphql.updater.GraphQLUpsertResultGetterContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -54,17 +58,22 @@ public class EntityMutationDataFetcher {
     @Autowired
     private ListableBeanFactory listableBeanFactory;
 
-    private static Map<Class<?>, Object> entityUpdater;
+    private static Map<Class<?>, Object> entityUpsertResultGetter;
 
     private static Map<Class<?>, Object> entityRemover;
 
+    private static Map<Class<?>, Object> entityUpdater;
+
     private static final String GRAPHQL_ENTITY_REMOVER_METHOD_NAME = GraphQLEntityRemover.class.getDeclaredMethods()[0].getName();
 
-    private static final String GRAPHQL_ENTITIES_UPDATER_METHOD_NAME = GraphQLUpsertResultGetter.class.getDeclaredMethods()[0].getName();
+    private static final String GRAPHQL_ENTITIES_UPDATER_METHOD_NAME = GraphQLUpdater.class.getDeclaredMethods()[0].getName();
+
+    private static final String GRAPHQL_ENTITIES_UPSERT_RESULT_GETTER_METHOD_NAME = GraphQLUpsertResultGetter.class
+            .getDeclaredMethods()[0].getName();
 
     // todo batch commit with association not supported now (not transferred from cuba-graphql)
     public DataFetcher<?> upsertEntity(MetaClass metaClass) {
-        Map<Class<?>, Object> entityUpdater = getCustomEntityUpdater();
+        Map<Class<?>, Object> entityResultGetter = getCustomEntityUpdater();
         return environment -> {
 
             Class<Object> javaClass = metaClass.getJavaClass();
@@ -81,7 +90,15 @@ public class EntityMutationDataFetcher {
 
             Collection<Object> objects;
             try {
-                objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan, true);
+                if (!entityUpdater.containsKey(metaClass.getJavaClass())) {
+                    objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan, true);
+                } else {
+                    Object bean = entityUpdater.get(metaClass.getJavaClass());
+                    Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITIES_UPDATER_METHOD_NAME,
+                            GraphQLUpdaterContext.class);
+                    objects = (Collection<Object>) method.invoke(bean, new GraphQLUpdaterContext(metaClass,
+                            Collections.singletonList(entity), entityImportPlan));
+                }
             } catch (EntityValidationException ex) {
                 throw new GqlEntityValidationException(ex, metaClass);
             } catch (PersistenceException ex) {
@@ -89,23 +106,24 @@ public class EntityMutationDataFetcher {
             } catch (AccessDeniedException ex) {
                 throw new GqlEntityValidationException(ex, "Can't save entity to database. Access denied");
             }
-            Object mainEntity = getMainEntity(objects, metaClass);
 
             FetchPlan fetchPlan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
-            // reload for response fetch plan, if required
-            if (!entityStates.isLoadedWithFetchPlan(mainEntity, fetchPlan)) {
-                LoadContext loadContext = new LoadContext(metaClass).setFetchPlan(fetchPlan);
-                loadContext.setId(EntityValues.getId(mainEntity));
-                if(!entityUpdater.containsKey(metaClass.getJavaClass())) {
+            Object mainEntity = getMainEntity(objects, metaClass);
+            if (entityResultGetter.containsKey(metaClass.getJavaClass())) {
+                Object bean = entityResultGetter.get(metaClass.getJavaClass());
+                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITIES_UPSERT_RESULT_GETTER_METHOD_NAME,
+                        GraphQLUpsertResultGetterContext.class);
+                mainEntity = method.invoke(bean, new GraphQLUpsertResultGetterContext(metaClass,
+                        mainEntity,
+                        new LoadContext(metaClass).setFetchPlan(fetchPlan), fetchPlan));
+            } else {
+                // reload for response fetch plan, if required
+                if (!entityStates.isLoadedWithFetchPlan(mainEntity, fetchPlan)) {
+                    LoadContext loadContext = new LoadContext(metaClass).setFetchPlan(fetchPlan);
+                    loadContext.setId(EntityValues.getId(mainEntity));
                     mainEntity = dataManager.load(loadContext);
-                } else {
-                    Object bean = entityUpdater.get(metaClass.getJavaClass());
-                    Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITIES_UPDATER_METHOD_NAME,
-                            LoadContext.class);
-                    mainEntity = method.invoke(bean, loadContext);
                 }
             }
-
             return responseBuilder.buildResponse((Entity) mainEntity, fetchPlan, metaClass, environmentUtils.getDotDelimitedProps(environment));
         };
     }
@@ -122,12 +140,13 @@ public class EntityMutationDataFetcher {
             UUID id = UUID.fromString(environment.getArgument("id"));
             log.debug("deleteEntity: id {}", id);
             Id<?> entityId = Id.of(id, metaClass.getJavaClass());
-            if(!entityRemover.containsKey(metaClass.getJavaClass())) {
+            if (!entityRemover.containsKey(metaClass.getJavaClass())) {
                 dataManager.remove(entityId);
             } else {
                 Object bean = entityRemover.get(metaClass.getJavaClass());
-                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITY_REMOVER_METHOD_NAME, Id.class);
-                method.invoke(bean, entityId);
+                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITY_REMOVER_METHOD_NAME,
+                        GraphQLEntityRemoverContext.class);
+                method.invoke(bean, new GraphQLEntityRemoverContext(metaClass, entityId));
             }
             return null;
         };
@@ -207,13 +226,29 @@ public class EntityMutationDataFetcher {
             Map<String, Object> removers = listableBeanFactory
                     .getBeansWithAnnotation(GraphQLModifier.class);
             for (Object remover : removers.values()) {
-                if (remover instanceof GraphQLUpsertResultGetter) {
+                if (remover instanceof GraphQLUpdater) {
                     ParameterizedType type = (ParameterizedType) Arrays.stream(remover.getClass().getGenericInterfaces())
-                            .filter(t -> t.getTypeName().startsWith(GraphQLUpsertResultGetter.class.getName())).findFirst().get();
+                            .filter(t -> t.getTypeName().startsWith(GraphQLUpdater.class.getName())).findFirst().get();
                     entityUpdater.put((Class<?>) type.getActualTypeArguments()[0], remover);
                 }
             }
         }
         return entityUpdater;
+    }
+
+    protected Map<Class<?>, Object> getCustomEntityUpsertResultGetter() {
+        if (entityUpsertResultGetter == null) {
+            entityUpsertResultGetter = new HashMap<>();
+            Map<String, Object> removers = listableBeanFactory
+                    .getBeansWithAnnotation(GraphQLModifier.class);
+            for (Object remover : removers.values()) {
+                if (remover instanceof GraphQLUpsertResultGetter) {
+                    ParameterizedType type = (ParameterizedType) Arrays.stream(remover.getClass().getGenericInterfaces())
+                            .filter(t -> t.getTypeName().startsWith(GraphQLUpsertResultGetter.class.getName())).findFirst().get();
+                    entityUpsertResultGetter.put((Class<?>) type.getActualTypeArguments()[0], remover);
+                }
+            }
+        }
+        return entityUpsertResultGetter;
     }
 }

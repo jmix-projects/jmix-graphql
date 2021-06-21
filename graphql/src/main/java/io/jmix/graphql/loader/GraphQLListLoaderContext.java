@@ -16,6 +16,71 @@
 
 package io.jmix.graphql.loader;
 
-public class GraphQLListLoaderContext {
+import io.jmix.core.FetchPlan;
+import io.jmix.core.LoadContext;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.graphql.schema.Types;
+import org.apache.commons.lang3.tuple.Pair;
+
+public class GraphQLListLoaderContext<E> {
+    private MetaClass metaClass;
+    private LogicalCondition filter;
+    private Pair<String, Types.SortOrder> orderBy;
+    private Integer limit;
+    private Integer offset;
+    private LoadContext<E> ctx;
+    private FetchPlan fetchPlan;
+
+    public GraphQLListLoaderContext(MetaClass metaClass, LoadContext<E> ctx, LogicalCondition filter, Pair<String, Types.SortOrder> orderBy,
+                                    Integer limit, Integer offset, FetchPlan fetchPlan) {
+        this.metaClass = metaClass;
+        this.filter = filter;
+        this.orderBy = orderBy;
+        this.limit = limit;
+        this.offset = offset;
+        this.ctx = ctx;
+        this.fetchPlan = fetchPlan;
+    }
+
+    public MetaClass getMetaClass() {
+        return metaClass;
+    }
+
+    public void setMetaClass(MetaClass metaClass) {
+        this.metaClass = metaClass;
+    }
+
+    public LogicalCondition getFilter() {
+        return filter;
+    }
+
+    public void setFilter(LogicalCondition filter) {
+        this.filter = filter;
+    }
+
+    public Pair<String, Types.SortOrder> getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(Pair<String, Types.SortOrder> orderBy) {
+        this.orderBy = orderBy;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
 
 }

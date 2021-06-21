@@ -16,7 +16,31 @@
 
 package io.jmix.graphql.updater;
 
-@FunctionalInterface
-public interface GraphQLEntityRemover<E> {
-    void deleteEntity(GraphQLEntityRemoverContext<E> graphQLEntityRemoverContext);
+import io.jmix.core.Id;
+import io.jmix.core.metamodel.model.MetaClass;
+
+public class GraphQLEntityRemoverContext<E> {
+    private Id<?> id;
+    private MetaClass metaClass;
+
+    public GraphQLEntityRemoverContext(MetaClass metaClass, Id<?> id) {
+        this.id = id;
+        this.metaClass = metaClass;
+    }
+
+    public Id<?> getId() {
+        return id;
+    }
+
+    public void setId(Id<?> id) {
+        this.id = id;
+    }
+
+    public MetaClass getMetaClass() {
+        return metaClass;
+    }
+
+    public void setMetaClass(MetaClass metaClass) {
+        this.metaClass = metaClass;
+    }
 }

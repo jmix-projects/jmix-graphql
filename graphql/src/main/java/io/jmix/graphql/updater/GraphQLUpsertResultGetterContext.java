@@ -14,31 +14,40 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.loader;
+package io.jmix.graphql.updater;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.LoadContext;
 import io.jmix.core.metamodel.model.MetaClass;
 
-public class GraphQLEntityLoaderContext<E> {
+public class GraphQLUpsertResultGetterContext<E> {
+
     private MetaClass metaClass;
-    private String id;
+    private Object entity;
     private LoadContext<E> loadContext;
     private FetchPlan fetchPlan;
 
-    public GraphQLEntityLoaderContext(MetaClass metaClass, String id, LoadContext<E> loadContext, FetchPlan fetchPlan) {
+    public GraphQLUpsertResultGetterContext(MetaClass metaClass, Object entity, LoadContext<E> loadContext, FetchPlan fetchPlan) {
         this.metaClass = metaClass;
-        this.id = id;
+        this.entity = entity;
         this.loadContext = loadContext;
         this.fetchPlan = fetchPlan;
     }
 
-    public String getId() {
-        return id;
+    public MetaClass getMetaClass() {
+        return metaClass;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setMetaClass(MetaClass metaClass) {
+        this.metaClass = metaClass;
+    }
+
+    public Object getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Object id) {
+        this.entity = id;
     }
 
     public LoadContext<E> getLoadContext() {
@@ -56,4 +65,5 @@ public class GraphQLEntityLoaderContext<E> {
     public void setFetchPlan(FetchPlan fetchPlan) {
         this.fetchPlan = fetchPlan;
     }
+
 }
