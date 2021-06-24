@@ -1,4 +1,4 @@
-mutation ($entity: inp_scr_DatatypesTestEntity){
+mutation ($entity: inp_scr_DatatypesTestEntity!){
     upsert_scr_DatatypesTestEntity(datatypesTestEntity: $entity)
     {
         id

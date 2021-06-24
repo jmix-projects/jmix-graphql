@@ -14,8 +14,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-import static io.jmix.graphql.schema.scalar.CustomScalars.SERIALIZATION_DATETIME_FORMAT;
-
 
 public class DateTimeScalar extends GraphQLScalarType {
 
@@ -46,9 +44,8 @@ public class DateTimeScalar extends GraphQLScalarType {
 
                 LocalDateTime localDateTime = DateTimeFormatter.ISO_DATE_TIME.parse(value.trim(), LocalDateTime::from);
 
-                String dateString = SERIALIZATION_DATETIME_FORMAT.format(localDateTime);
-                log.debug("parseLiteral return {}", dateString);
-
+                log.debug("parseLiteral return {}", localDateTime);
+                
                 return Timestamp.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
             }
         });
