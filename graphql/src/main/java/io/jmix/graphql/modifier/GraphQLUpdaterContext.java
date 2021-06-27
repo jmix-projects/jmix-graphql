@@ -14,26 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.updater;
+package io.jmix.graphql.modifier;
 
-import io.jmix.core.Id;
+import io.jmix.core.EntityImportPlan;
 import io.jmix.core.metamodel.model.MetaClass;
 
-public class GraphQLEntityRemoverContext<E> {
-    private Id<?> id;
+import java.util.List;
+
+public class GraphQLUpdaterContext<E> {
     private MetaClass metaClass;
+    private List<E> entities;
+    private EntityImportPlan entityImportPlan;
 
-    public GraphQLEntityRemoverContext(MetaClass metaClass, Id<?> id) {
-        this.id = id;
+    public GraphQLUpdaterContext(MetaClass metaClass, List<E> entities, EntityImportPlan entityImportPlan) {
         this.metaClass = metaClass;
-    }
-
-    public Id<?> getId() {
-        return id;
-    }
-
-    public void setId(Id<?> id) {
-        this.id = id;
+        this.entities = entities;
+        this.entityImportPlan = entityImportPlan;
     }
 
     public MetaClass getMetaClass() {
@@ -42,5 +38,21 @@ public class GraphQLEntityRemoverContext<E> {
 
     public void setMetaClass(MetaClass metaClass) {
         this.metaClass = metaClass;
+    }
+
+    public List<E> getEntities() {
+        return entities;
+    }
+
+    public void setEntities(List<E> entities) {
+        this.entities = entities;
+    }
+
+    public EntityImportPlan getEntityImportPlan() {
+        return entityImportPlan;
+    }
+
+    public void setEntityImportPlan(EntityImportPlan entityImportPlan) {
+        this.entityImportPlan = entityImportPlan;
     }
 }

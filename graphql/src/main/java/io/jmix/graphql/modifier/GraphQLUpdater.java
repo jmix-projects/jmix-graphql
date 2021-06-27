@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.updater;
+package io.jmix.graphql.modifier;
 
 import java.util.Collection;
 
 @FunctionalInterface
 public interface GraphQLUpdater<E> {
-    Collection<Object> importEntities(GraphQLUpdaterContext<E> context);
+    Collection<E> importEntities(GraphQLUpdaterContext<E> context);
 }

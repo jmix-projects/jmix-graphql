@@ -17,24 +17,44 @@
 package io.jmix.graphql.custom
 
 import io.jmix.graphql.AbstractGraphQLTest
+import org.springframework.context.annotation.ComponentScan
 
+@ComponentScan("io.jmix.graphql.custom.service")
 class CustomLoaderTest extends AbstractGraphQLTest{
-    def "filter conditions union by AND"() {
+    def "Custom cars loader "() {
         when:
         def response = query(
-                "datafetcher/query-cars.gql",
-                asObjectNode('{"filter": {"AND": [' +
-                        '  {"price": {"_lte": "30"}},' +
-                        '  {"price": {"_isNull": false}}' +
-                        ']}}')
+                "datafetcher/query-cars.gql"
         )
 
         then:
         def body = getBody(response)
         body == '{"data":{"scr_CarList":[' +
-                '{"_instanceName":"GAZ - 2410","price":"10"},' +
-                '{"_instanceName":"Tesla - Model Y","price":"30"},' +
-                '{"_instanceName":"Audi - 2141","price":"20"}' +
+                '{"_instanceName":"BMW - M3","price":"10"},' +
+                '{"_instanceName":"Lada - Vesta","price":"20"}' +
                 ']}}'
     }
+
+    def "Custom car count loader"() {
+        when:
+        def response = query(
+                "datafetcher/query-car-count.gql"
+        )
+        then:
+        getBody(response) == '{"data":{"scr_CarCount":"999"}}'
+    }
+
+    def "Custom car loader"() {
+        when:
+        def response = query(
+                "datafetcher/query-car.gql",
+                asObjectNode('{"id": "123e4567-e89b-12d3-a456-426655440000"}')
+        )
+        then:
+        def body = getBody(response)
+        body == '{"data":{"scr_CarById":' +
+                '{"_instanceName":"Lada - Vesta","price":"10"}' +
+                '}}'
+    }
+
 }
