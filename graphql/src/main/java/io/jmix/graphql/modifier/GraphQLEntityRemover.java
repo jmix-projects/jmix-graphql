@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.updater;
+package io.jmix.graphql.modifier;
 
 @FunctionalInterface
-public interface GraphQLUpsertResultGetter<E> {
-    E getUpsertResult(GraphQLUpsertResultGetterContext<E> context);
+public interface GraphQLEntityRemover<E> {
+    void deleteEntity(GraphQLEntityRemoverContext<E> graphQLEntityRemoverContext);
 }
