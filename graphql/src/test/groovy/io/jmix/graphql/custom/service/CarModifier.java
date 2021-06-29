@@ -29,14 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import test_support.entity.Car;
-import test_support.entity.CarType;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
-@Component
+@Component("Test_CarModifier")
 @GraphQLModifier
 public class CarModifier implements GraphQLEntityRemover<Car>, GraphQLUpdater<Car>, GraphQLUpsertResultGetter<Car> {
     @Autowired

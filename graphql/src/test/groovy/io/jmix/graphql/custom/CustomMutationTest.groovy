@@ -18,13 +18,17 @@ package io.jmix.graphql.custom
 
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.test.annotation.DirtiesContext
 
+//@ContextConfiguration(classes = [CarModifier.class, ])
+//@ContextConfiguration(classes = CarModifier.class)
 @ComponentScan("io.jmix.graphql.custom.service")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class CustomMutationTest extends AbstractGraphQLTest{
 
     def id1 = "4c34985b-67be-4788-891a-839d479bf9e6"
 
-    def "create new Car instance, modified this and return additional fetched attributes and _instanceName"() {
+    def "Custom create new Car instance, modified this and return additional fetched attributes and _instanceName"() {
         when:
         def response = query(
                 "datafetcher/upsert-car-return-instance-name.gql", asObjectNode("{\"id\":\"$id1\"}"))
@@ -33,4 +37,18 @@ class CustomMutationTest extends AbstractGraphQLTest{
         response.get('$.data.upsert_scr_Car.price') == "10"
         response.get('$.data.upsert_scr_Car.maxPassengers') == "5"
     }
+
+    def "Custom deletion"() {
+        def id = "265f1282-b36b-48f2-80ab-cb22e0b75bbc"
+        when:
+        def response = query(
+                "datafetcher/delete-car.gql",
+                asObjectNode('{"id": "' + id + '"}}'),
+                mechanicToken
+        )
+
+        then:
+        getBody(response) == '{"data":{"delete_scr_Car":null}}'
+    }
+
 }

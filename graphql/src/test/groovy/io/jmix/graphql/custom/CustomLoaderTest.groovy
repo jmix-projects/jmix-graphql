@@ -18,9 +18,12 @@ package io.jmix.graphql.custom
 
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.test.annotation.DirtiesContext
 
 @ComponentScan("io.jmix.graphql.custom.service")
-class CustomLoaderTest extends AbstractGraphQLTest{
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+class CustomLoaderTest extends AbstractGraphQLTest {
+
     def "Custom cars loader "() {
         when:
         def response = query(
@@ -56,5 +59,4 @@ class CustomLoaderTest extends AbstractGraphQLTest{
                 '{"_instanceName":"Lada - Vesta","price":"10"}' +
                 '}}'
     }
-
 }

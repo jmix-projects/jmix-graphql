@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component
+@Component("Test_CarLoader")
 @GraphQLLoader
 public class CarLoader implements GraphQLEntityCountLoader<Car>,
         GraphQLEntityListLoader<Car>, GraphQLEntityLoader<Car> {
