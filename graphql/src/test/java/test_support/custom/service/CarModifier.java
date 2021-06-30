@@ -27,7 +27,6 @@ import io.jmix.graphql.modifier.GraphQLUpsertResultGetterContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import test_support.entity.Car;
