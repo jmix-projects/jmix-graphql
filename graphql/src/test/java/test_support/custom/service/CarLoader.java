@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.custom.service;
+package test_support.custom.service;
 
 import io.jmix.core.Metadata;
 import io.jmix.graphql.annotation.GraphQLLoader;
@@ -25,6 +25,7 @@ import io.jmix.graphql.loader.GraphQLEntityLoader;
 import io.jmix.graphql.loader.GraphQLEntityLoaderContext;
 import io.jmix.graphql.loader.GraphQLListLoaderContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import test_support.entity.Car;
 
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Profile("custom")
 @Component("Test_CarLoader")
 @GraphQLLoader
 public class CarLoader implements GraphQLEntityCountLoader<Car>,

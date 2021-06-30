@@ -17,14 +17,12 @@
 package io.jmix.graphql.custom
 
 import io.jmix.graphql.AbstractGraphQLTest
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ActiveProfiles
+import spock.lang.Ignore
 
-//@ContextConfiguration(classes = [CarModifier.class, ])
-//@ContextConfiguration(classes = CarModifier.class)
-@ComponentScan("io.jmix.graphql.custom.service")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class CustomMutationTest extends AbstractGraphQLTest{
+@Ignore
+@ActiveProfiles("custom")
+class CustomMutationTest extends AbstractGraphQLTest {
 
     def id1 = "4c34985b-67be-4788-891a-839d479bf9e6"
 
