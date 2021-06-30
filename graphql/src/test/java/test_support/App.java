@@ -29,11 +29,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import test_support.custom.service.CarLoader;
+import test_support.custom.service.CarModifier;
 
 import javax.sql.DataSource;
 
@@ -53,6 +56,20 @@ public class App {
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL)
                 .build();
+    }
+
+    @Bean
+    @Primary
+    @Profile("custom")
+    CarLoader carLoader() {
+        return new CarLoader();
+    }
+
+    @Bean
+    @Primary
+    @Profile("custom")
+    CarModifier carModifier() {
+        return new CarModifier();
     }
 
     @Bean

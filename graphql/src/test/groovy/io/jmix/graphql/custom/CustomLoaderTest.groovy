@@ -17,11 +17,13 @@
 package io.jmix.graphql.custom
 
 import io.jmix.graphql.AbstractGraphQLTest
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.test.annotation.DirtiesContext
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.env.Environment
+import org.springframework.test.context.ActiveProfiles
+import spock.lang.Ignore
 
-@ComponentScan("io.jmix.graphql.custom.service")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Ignore
+@ActiveProfiles("custom")
 class CustomLoaderTest extends AbstractGraphQLTest {
 
     def "Custom cars loader "() {
@@ -59,4 +61,91 @@ class CustomLoaderTest extends AbstractGraphQLTest {
                 '{"_instanceName":"Lada - Vesta","price":"10"}' +
                 '}}'
     }
+//    @LocalServerPort
+//    int port
+//
+//    @Autowired
+//    GraphQLTestTemplate graphQLTestTemplate
+//    @Autowired
+//    ResourceRoleRepository resourceRoleRepository
+//    @Autowired
+//    InMemoryUserRepository userRepository
+//
+//    protected TransactionTemplate transaction
+//    protected String adminToken
+//    protected String mechanicToken
+//    protected UserDetails admin
+//    protected UserDetails mechanic
+//
+//    void setup() {
+//        admin = User.builder()
+//                .username("admin")
+//                .password("{noop}admin")
+//                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode("system-full-access")))
+//                .build()
+//        userRepository.addUser(admin)
+//
+//        mechanic = User.builder()
+//                .username("mechanic")
+//                .password("{noop}1")
+//                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode("mechanics")))
+//                .build()
+//        userRepository.addUser(mechanic)
+//
+//        adminToken = RestTestUtils.getAuthToken("admin", "admin", port)
+//        mechanicToken = RestTestUtils.getAuthToken("mechanic", "1", port)
+//    }
+//
+//    @Autowired
+//    protected void setTransactionManager(PlatformTransactionManager transactionManager) {
+//        transaction = new TransactionTemplate(transactionManager)
+//        transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW)
+//    }
+//
+//    protected query(String queryFilePath) {
+//        return graphQLTestTemplate
+//                .withBearerAuth(adminToken)
+//                .postForResource("graphql/io/jmix/graphql/" + queryFilePath)
+//    }
+//
+//    protected query(String queryFilePath, HttpHeaders httpHeaders) {
+//        return graphQLTestTemplate
+//                .withHeaders(httpHeaders)
+//                .withBearerAuth(adminToken)
+//                .postForResource("graphql/io/jmix/graphql/" + queryFilePath)
+//    }
+//
+//    protected query(String queryFilePath, ObjectNode variables) {
+//        return query(queryFilePath, variables, adminToken)
+//    }
+//
+//    protected query(String queryFilePath, ObjectNode variables, String token) {
+//        return graphQLTestTemplate
+//                .withBearerAuth(token)
+//                .perform("graphql/io/jmix/graphql/" + queryFilePath, variables)
+//    }
+//
+//    static ObjectNode asObjectNode(String str) {
+//        return new ObjectMapper().readValue(str, ObjectNode.class)
+//    }
+//
+//    static String getBody(GraphQLResponse response) {
+//        return response.rawResponse.body
+//    }
+//
+//    static JsonObject getExtensions(JsonObject error) {
+//        error.getAsJsonObject("extensions").getAsJsonObject()
+//    }
+//
+//    static String getMessage(JsonObject jsonObject) {
+//        jsonObject.get("message").getAsString()
+//    }
+//
+//    static String getPath(JsonObject jsonObject) {
+//        jsonObject.get("path").getAsString()
+//    }
+//
+//    static JsonArray getErrors(GraphQLResponse response) {
+//        JsonParser.parseString(response.rawResponse.body).getAsJsonArray("errors")
+//    }
 }

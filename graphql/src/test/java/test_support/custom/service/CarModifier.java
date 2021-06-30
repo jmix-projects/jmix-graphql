@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.custom.service;
+package test_support.custom.service;
 
 import io.jmix.core.Metadata;
 import io.jmix.graphql.annotation.GraphQLModifier;
@@ -27,15 +27,19 @@ import io.jmix.graphql.modifier.GraphQLUpsertResultGetterContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import test_support.entity.Car;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 
+@Profile("custom")
 @Component("Test_CarModifier")
 @GraphQLModifier
 public class CarModifier implements GraphQLEntityRemover<Car>, GraphQLUpdater<Car>, GraphQLUpsertResultGetter<Car> {
+
     @Autowired
     Metadata metadata;
 
