@@ -25,7 +25,7 @@ class DateQueryTest extends AbstractGraphQLTest {
     def "should return a correct formatted date"() {
         when:
         def response = query(
-                "datafetcher/query-datatypesTestEntity-dates-with-filter.graphql",
+                "datafetcher/date/testEntity-dates-with-filter.gql",
                 asObjectNode('{"filter": {"AND": [' +
                         '{"id": {"_eq": "032fd8a5-e042-4828-a802-36cbd2ce12de"}}' +
                         ']}}'))
