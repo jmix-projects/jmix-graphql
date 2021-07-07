@@ -64,7 +64,7 @@ public class GenericSchemaGenerator {
                             .argument(arg(NamingUtils.LIMIT, "Int", "limit the number of items returned"))
                             .argument((arg(NamingUtils.OFFSET, "Int", "skip the first n items")))
                             // todo array in order by, add ability to order by nested objects
-                            .argument(listArg(NamingUtils.ORDER_BY, FilterTypesGenerator.composeFilterOrderByTypeName(metaClass),
+                            .argument(arg(NamingUtils.ORDER_BY, FilterTypesGenerator.composeFilterOrderByTypeName(metaClass),
                                     "sort the items by one or more fields"))
                             .build());
 
@@ -77,7 +77,7 @@ public class GenericSchemaGenerator {
                             .argument(argNonNull("id", "String"))
                             .build());
 
-            // query 'scr_CarCount(filter)'
+            // query 'scr_CarCount()'
             fields.add(
                     GraphQLFieldDefinition.newFieldDefinition()
                             .name(NamingUtils.composeCountQueryName(metaClass))
