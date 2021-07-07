@@ -19,27 +19,33 @@ package io.jmix.graphql.service
 import com.graphql.spring.boot.test.GraphQLTestTemplate
 import io.jmix.graphql.AbstractGraphQLTest
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Ignore
 
-@Ignore
 class UserInfoServiceTest extends AbstractGraphQLTest {
-
 
     @Autowired
     GraphQLTestTemplate graphQLTestTemplate
 
-    def "userInfo query works"() {
+    def "userInfo query works for admin user"() {
         when:
-        def response = graphQLTestTemplate.postForResource("graphql/io/jmix/graphql/service/userInfo.graphql")
+        def response = query("service/userInfo.graphql")
 
         then:
-        response.rawResponse.body == '{' +
-                '  "data": {' +
-                '    "userInfo": {' +
-                '      "username": "anonymous",' +
-                '      "locale": "en"' +
-                '    }' +
-                '  }' +
-                '}'
+        getBody(response) == '{"data":{' +
+                '"userInfo":{' +
+                '"username":"admin",' +
+                '"locale":"en"' +
+                '}}}'
+    }
+
+    def "userInfo query works for mechanic user"() {
+        when:
+        def response = query("service/userInfo.graphql", null, mechanicToken)
+
+        then:
+        getBody(response) == '{"data":{' +
+                '"userInfo":{' +
+                '"username":"mechanic",' +
+                '"locale":"en"' +
+                '}}}'
     }
 }

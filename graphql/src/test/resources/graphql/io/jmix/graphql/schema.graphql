@@ -1,3 +1,7 @@
+type Greeting {
+  message: String
+}
+
 "Mutation root"
 type Mutation {
   delete_scr_AssociationM2MTestEntity(id: String!): Void
@@ -68,7 +72,9 @@ type Mutation {
 type Query {
   entityMessages(className: String, locale: String): [gql_MessageDetail]
   enumMessages(className: String, locale: String): [gql_MessageDetail]
+  greeting: Greeting
   permissions: sec_PermissionConfig
+  personalGreeting(name: String!): Greeting
   scr_AssociationM2MTestEntityById(id: String!): scr_AssociationM2MTestEntity
   scr_AssociationM2MTestEntityCount(
     "expressions to compare scr_AssociationM2MTestEntity objects, all items are combined with logical 'AND'"
@@ -76,11 +82,11 @@ type Query {
   ): Long
   scr_AssociationM2MTestEntityList(
     "expressions to compare scr_AssociationM2MTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_AssociationM2MTestEntityFilterCondition], 
+    filter: [inp_scr_AssociationM2MTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_AssociationM2MTestEntityOrderBy]
   ): [scr_AssociationM2MTestEntity]
@@ -91,11 +97,11 @@ type Query {
   ): Long
   scr_AssociationM2OTestEntityList(
     "expressions to compare scr_AssociationM2OTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_AssociationM2OTestEntityFilterCondition], 
+    filter: [inp_scr_AssociationM2OTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_AssociationM2OTestEntityOrderBy]
   ): [scr_AssociationM2OTestEntity]
@@ -106,11 +112,11 @@ type Query {
   ): Long
   scr_AssociationO2MTestEntityList(
     "expressions to compare scr_AssociationO2MTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_AssociationO2MTestEntityFilterCondition], 
+    filter: [inp_scr_AssociationO2MTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_AssociationO2MTestEntityOrderBy]
   ): [scr_AssociationO2MTestEntity]
@@ -121,11 +127,11 @@ type Query {
   ): Long
   scr_AssociationO2OTestEntityList(
     "expressions to compare scr_AssociationO2OTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_AssociationO2OTestEntityFilterCondition], 
+    filter: [inp_scr_AssociationO2OTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_AssociationO2OTestEntityOrderBy]
   ): [scr_AssociationO2OTestEntity]
@@ -136,11 +142,11 @@ type Query {
   ): Long
   scr_BoringStringIdTestEntityList(
     "expressions to compare scr_BoringStringIdTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_BoringStringIdTestEntityFilterCondition], 
+    filter: [inp_scr_BoringStringIdTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_BoringStringIdTestEntityOrderBy]
   ): [scr_BoringStringIdTestEntity]
@@ -151,11 +157,11 @@ type Query {
   ): Long
   scr_CarList(
     "expressions to compare scr_Car objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_CarFilterCondition], 
+    filter: [inp_scr_CarFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_CarOrderBy]
   ): [scr_Car]
@@ -166,11 +172,11 @@ type Query {
   ): Long
   scr_CarRentList(
     "expressions to compare scr_CarRent objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_CarRentFilterCondition], 
+    filter: [inp_scr_CarRentFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_CarRentOrderBy]
   ): [scr_CarRent]
@@ -181,11 +187,11 @@ type Query {
   ): Long
   scr_CompositionO2MTestEntityList(
     "expressions to compare scr_CompositionO2MTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_CompositionO2MTestEntityFilterCondition], 
+    filter: [inp_scr_CompositionO2MTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_CompositionO2MTestEntityOrderBy]
   ): [scr_CompositionO2MTestEntity]
@@ -196,11 +202,11 @@ type Query {
   ): Long
   scr_CompositionO2OTestEntityList(
     "expressions to compare scr_CompositionO2OTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_CompositionO2OTestEntityFilterCondition], 
+    filter: [inp_scr_CompositionO2OTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_CompositionO2OTestEntityOrderBy]
   ): [scr_CompositionO2OTestEntity]
@@ -211,11 +217,11 @@ type Query {
   ): Long
   scr_CustomerList(
     "expressions to compare scr_Customer objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_CustomerFilterCondition], 
+    filter: [inp_scr_CustomerFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_CustomerOrderBy]
   ): [scr_Customer]
@@ -226,11 +232,11 @@ type Query {
   ): Long
   scr_DatatypesTestEntity2List(
     "expressions to compare scr_DatatypesTestEntity2 objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_DatatypesTestEntity2FilterCondition], 
+    filter: [inp_scr_DatatypesTestEntity2FilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_DatatypesTestEntity2OrderBy]
   ): [scr_DatatypesTestEntity2]
@@ -241,11 +247,11 @@ type Query {
   ): Long
   scr_DatatypesTestEntity3List(
     "expressions to compare scr_DatatypesTestEntity3 objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_DatatypesTestEntity3FilterCondition], 
+    filter: [inp_scr_DatatypesTestEntity3FilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_DatatypesTestEntity3OrderBy]
   ): [scr_DatatypesTestEntity3]
@@ -256,11 +262,11 @@ type Query {
   ): Long
   scr_DatatypesTestEntityList(
     "expressions to compare scr_DatatypesTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_DatatypesTestEntityFilterCondition], 
+    filter: [inp_scr_DatatypesTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_DatatypesTestEntityOrderBy]
   ): [scr_DatatypesTestEntity]
@@ -271,11 +277,11 @@ type Query {
   ): Long
   scr_DeeplyNestedTestEntityList(
     "expressions to compare scr_DeeplyNestedTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_DeeplyNestedTestEntityFilterCondition], 
+    filter: [inp_scr_DeeplyNestedTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_DeeplyNestedTestEntityOrderBy]
   ): [scr_DeeplyNestedTestEntity]
@@ -286,11 +292,11 @@ type Query {
   ): Long
   scr_FavoriteCarList(
     "expressions to compare scr_FavoriteCar objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_FavoriteCarFilterCondition], 
+    filter: [inp_scr_FavoriteCarFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_FavoriteCarOrderBy]
   ): [scr_FavoriteCar]
@@ -301,11 +307,11 @@ type Query {
   ): Long
   scr_GarageList(
     "expressions to compare scr_Garage objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_GarageFilterCondition], 
+    filter: [inp_scr_GarageFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_GarageOrderBy]
   ): [scr_Garage]
@@ -316,11 +322,11 @@ type Query {
   ): Long
   scr_IntIdentityIdTestEntityList(
     "expressions to compare scr_IntIdentityIdTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_IntIdentityIdTestEntityFilterCondition], 
+    filter: [inp_scr_IntIdentityIdTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_IntIdentityIdTestEntityOrderBy]
   ): [scr_IntIdentityIdTestEntity]
@@ -331,11 +337,11 @@ type Query {
   ): Long
   scr_IntegerIdTestEntityList(
     "expressions to compare scr_IntegerIdTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_IntegerIdTestEntityFilterCondition], 
+    filter: [inp_scr_IntegerIdTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_IntegerIdTestEntityOrderBy]
   ): [scr_IntegerIdTestEntity]
@@ -351,21 +357,21 @@ type Query {
   ): Long
   scr_OrderLineList(
     "expressions to compare scr_OrderLine objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_OrderLineFilterCondition], 
+    filter: [inp_scr_OrderLineFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_OrderLineOrderBy]
   ): [scr_OrderLine]
   scr_OrderList(
     "expressions to compare scr_Order objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_OrderFilterCondition], 
+    filter: [inp_scr_OrderFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_OrderOrderBy]
   ): [scr_Order]
@@ -376,11 +382,11 @@ type Query {
   ): Long
   scr_ProductList(
     "expressions to compare scr_Product objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_ProductFilterCondition], 
+    filter: [inp_scr_ProductFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_ProductOrderBy]
   ): [scr_Product]
@@ -391,11 +397,11 @@ type Query {
   ): Long
   scr_SparePartList(
     "expressions to compare scr_SparePart objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_SparePartFilterCondition], 
+    filter: [inp_scr_SparePartFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_SparePartOrderBy]
   ): [scr_SparePart]
@@ -406,11 +412,11 @@ type Query {
   ): Long
   scr_StringIdTestEntityList(
     "expressions to compare scr_StringIdTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_StringIdTestEntityFilterCondition], 
+    filter: [inp_scr_StringIdTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_StringIdTestEntityOrderBy]
   ): [scr_StringIdTestEntity]
@@ -421,11 +427,11 @@ type Query {
   ): Long
   scr_TechnicalCertificateList(
     "expressions to compare scr_TechnicalCertificate objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_TechnicalCertificateFilterCondition], 
+    filter: [inp_scr_TechnicalCertificateFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_TechnicalCertificateOrderBy]
   ): [scr_TechnicalCertificate]
@@ -436,11 +442,11 @@ type Query {
   ): Long
   scr_UserList(
     "expressions to compare scr_User objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_UserFilterCondition], 
+    filter: [inp_scr_UserFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_UserOrderBy]
   ): [scr_User]
@@ -451,11 +457,11 @@ type Query {
   ): Long
   scr_WeirdStringIdTestEntityList(
     "expressions to compare scr_WeirdStringIdTestEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_scr_WeirdStringIdTestEntityFilterCondition], 
+    filter: [inp_scr_WeirdStringIdTestEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_scr_WeirdStringIdTestEntityOrderBy]
   ): [scr_WeirdStringIdTestEntity]
@@ -466,11 +472,11 @@ type Query {
   ): Long
   sec_ResourcePolicyEntityList(
     "expressions to compare sec_ResourcePolicyEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_sec_ResourcePolicyEntityFilterCondition], 
+    filter: [inp_sec_ResourcePolicyEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_sec_ResourcePolicyEntityOrderBy]
   ): [sec_ResourcePolicyEntity]
@@ -481,11 +487,11 @@ type Query {
   ): Long
   sec_ResourceRoleEntityList(
     "expressions to compare sec_ResourceRoleEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_sec_ResourceRoleEntityFilterCondition], 
+    filter: [inp_sec_ResourceRoleEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_sec_ResourceRoleEntityOrderBy]
   ): [sec_ResourceRoleEntity]
@@ -496,11 +502,11 @@ type Query {
   ): Long
   sec_RoleAssignmentEntityList(
     "expressions to compare sec_RoleAssignmentEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_sec_RoleAssignmentEntityFilterCondition], 
+    filter: [inp_sec_RoleAssignmentEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_sec_RoleAssignmentEntityOrderBy]
   ): [sec_RoleAssignmentEntity]
@@ -511,11 +517,11 @@ type Query {
   ): Long
   sec_RowLevelPolicyEntityList(
     "expressions to compare sec_RowLevelPolicyEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_sec_RowLevelPolicyEntityFilterCondition], 
+    filter: [inp_sec_RowLevelPolicyEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_sec_RowLevelPolicyEntityOrderBy]
   ): [sec_RowLevelPolicyEntity]
@@ -526,11 +532,11 @@ type Query {
   ): Long
   sec_RowLevelRoleEntityList(
     "expressions to compare sec_RowLevelRoleEntity objects, all items are combined with logical 'AND'"
-    filter: [inp_sec_RowLevelRoleEntityFilterCondition], 
+    filter: [inp_sec_RowLevelRoleEntityFilterCondition],
     "limit the number of items returned"
-    limit: Int, 
+    limit: Int,
     "skip the first n items"
-    offset: Int, 
+    offset: Int,
     "sort the items by one or more fields"
     orderBy: [inp_sec_RowLevelRoleEntityOrderBy]
   ): [sec_RowLevelRoleEntity]
