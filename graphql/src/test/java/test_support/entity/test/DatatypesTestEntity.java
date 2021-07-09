@@ -8,7 +8,6 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.time.*;
 import java.util.Date;
 import java.util.List;
@@ -49,8 +48,12 @@ public class DatatypesTestEntity {
     @Column(name = "STRING_ATTR")
     protected String stringAttr;
 
+    @Column(name = "CHAR_ATTR")
+    private Character charAttr;
+
     @Column(name = "TIME_ATTR")
-    private Time timeAttr;
+    @Temporal(TemporalType.TIME)
+    private Date timeAttr;
 
     public UUID getId() {
         return id;
@@ -141,11 +144,19 @@ public class DatatypesTestEntity {
     @Column(name = "READ_ONLY_STRING_ATTR")
     protected String readOnlyStringAttr;
 
-    public Time getTimeAttr() {
+    public Character getCharAttr() {
+        return charAttr;
+    }
+
+    public void setCharAttr(Character charAttr) {
+        this.charAttr = charAttr;
+    }
+
+    public Date getTimeAttr() {
         return timeAttr;
     }
 
-    public void setTimeAttr(Time timeAttr) {
+    public void setTimeAttr(Date timeAttr) {
         this.timeAttr = timeAttr;
     }
 

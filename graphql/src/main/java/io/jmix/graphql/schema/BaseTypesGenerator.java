@@ -17,10 +17,7 @@
 package io.jmix.graphql.schema;
 
 import graphql.Scalars;
-import graphql.schema.GraphQLArgument;
-import graphql.schema.GraphQLInputObjectField;
-import graphql.schema.GraphQLList;
-import graphql.schema.GraphQLTypeReference;
+import graphql.schema.*;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.MetadataUtils;
@@ -28,8 +25,8 @@ import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.datafetcher.GqlEntityValidationException;
 import io.jmix.graphql.schema.scalar.CustomScalars;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -38,7 +35,7 @@ import java.time.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Component
+@Component("gql_BaseTypesGenerator")
 public class BaseTypesGenerator {
 
     @Autowired
@@ -47,8 +44,8 @@ public class BaseTypesGenerator {
     /**
      * Shortcut for input value definition that has list type
      *
-     * @param fieldName field name
-     * @param type input value type
+     * @param fieldName   field name
+     * @param type        input value type
      * @param description input value description
      * @return field
      */
@@ -62,8 +59,8 @@ public class BaseTypesGenerator {
     /**
      * Shortcut for input value definition
      *
-     * @param fieldName field name
-     * @param type input value type
+     * @param fieldName   field name
+     * @param type        input value type
      * @param description input value description
      * @return field
      */
@@ -77,7 +74,7 @@ public class BaseTypesGenerator {
     public static GraphQLArgument argNonNull(String id, String type) {
         return GraphQLArgument.newArgument()
                 .name(id)
-                .type(new GraphQLTypeReference(type))
+                .type(GraphQLNonNull.nonNull(new GraphQLTypeReference(type)))
                 .build();
     }
 
@@ -111,7 +108,7 @@ public class BaseTypesGenerator {
                 .build();
     }
 
-    @NotNull
+    @NonNull
     public static GraphQLList listType(String typeName) {
         return GraphQLList.list(new GraphQLTypeReference(typeName));
     }
@@ -142,6 +139,8 @@ public class BaseTypesGenerator {
 
         if (String.class.isAssignableFrom(javaType))
             return Scalars.GraphQLString.getName();
+        if (Character.class.isAssignableFrom(javaType))
+            return Scalars.GraphQLChar.getName();
         if (Integer.class.isAssignableFrom(javaType) || int.class.isAssignableFrom(javaType)) {
             return Scalars.GraphQLInt.getName();
         }
@@ -175,7 +174,7 @@ public class BaseTypesGenerator {
                 return CustomScalars.GraphQLTime.getName();
             }
             if (MetadataUtils.isDateTime(metaProperty)) {
-                    return CustomScalars.GraphQLDateTime.getName();
+                return CustomScalars.GraphQLDateTime.getName();
             }
             throw new GqlEntityValidationException("Unsupported datatype mapping for date property " + metaProperty);
         }

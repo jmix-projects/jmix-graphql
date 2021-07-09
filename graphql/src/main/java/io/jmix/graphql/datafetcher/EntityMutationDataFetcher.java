@@ -29,8 +29,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-@Component
+@Component("gql_EntityMutationDataFetcher")
 public class EntityMutationDataFetcher {
 
     private final Logger log = LoggerFactory.getLogger(EntityMutationDataFetcher.class);
@@ -55,6 +57,8 @@ public class EntityMutationDataFetcher {
     private EnvironmentUtils environmentUtils;
     @Autowired
     private AccessManager accessManager;
+    @Autowired
+    private ObjectMapper objectMapper;
     @Autowired
     private ListableBeanFactory listableBeanFactory;
 
@@ -81,13 +85,14 @@ public class EntityMutationDataFetcher {
             Map<String, String> input = environment.getArgument(NamingUtils.uncapitalizedSimpleName(javaClass));
             log.debug("upsertEntity: input {}", input);
 
-            String entityJson = new ObjectMapper().writeValueAsString(input);
+            String entityJson = objectMapper.writeValueAsString(input);
             log.debug("upsertEntity: json {}", entityJson);
 
             Object entity = entitySerialization.entityFromJson(entityJson, metaClass);
 
             EntityImportPlan entityImportPlan = entityImportPlanJsonBuilder.buildFromJson(entityJson, metaClass);
             checkReadOnlyAttributeWrite(metaClass, entityImportPlan, entity);
+            populateAndCheckComposition(entity, new HashSet<>());
 
             Collection<Object> objects;
             try {
@@ -101,7 +106,7 @@ public class EntityMutationDataFetcher {
                             Collections.singletonList(entity), entityImportPlan));
                 }
             } catch (EntityValidationException ex) {
-                throw new GqlEntityValidationException(ex, metaClass);
+                throw new GqlEntityValidationException(ex, entity, metaClass);
             } catch (PersistenceException ex) {
                 throw new GqlEntityValidationException(ex, "Can't save entity to database");
             } catch (AccessDeniedException ex) {
@@ -200,7 +205,9 @@ public class EntityMutationDataFetcher {
                 .collect(Collectors.toList());
 
         if (!excludedProperties.isEmpty()) {
-            throw new GqlEntityValidationException("Modifying attributes is forbidden " + excludedProperties);
+            String message = "Modifying attributes is forbidden " + excludedProperties;
+            log.error(message);
+            throw new GqlEntityValidationException(message);
         }
 
     }
@@ -220,6 +227,7 @@ public class EntityMutationDataFetcher {
         }
         return entityRemover;
     }
+
 
     protected Map<Class<?>, Object> getCustomEntityUpdater() {
         if (entityUpdater == null) {
@@ -251,5 +259,70 @@ public class EntityMutationDataFetcher {
             }
         }
         return entityUpsertResultGetter;
+
+    /**
+     * Walk through entity graph and check that all compositions have correct relations. If composition inverse value is
+     * null - update it to correct value. If composition inverse value doesn't match parent - throw exception.
+     *
+     * @param entity    entity to be checked
+     * @param visited   a set of entities that already be checked in graph
+     */
+    protected void populateAndCheckComposition(Object entity, Set<Object> visited) {
+        if (visited.contains(entity)) {
+            return;
+        }
+        MetaClass metaClass = metadata.getClass(entity);
+        visited.add(entity);
+        metaClass.getProperties().stream()
+                .filter(metaProperty -> MetaProperty.Type.COMPOSITION.equals(metaProperty.getType()))
+                .filter(metaProperty -> !visited.contains(EntityValues.getValue(entity, metaProperty.getName())))
+                .filter(metaProperty -> EntityValues.getValue(entity, metaProperty.getName()) != null)
+                .forEach(metaProperty -> {
+                    //value from COMPOSITION metaProperty
+                    Object childEntity = EntityValues.getValue(entity, metaProperty.getName());
+                    Stream<?> childEntityStream = (childEntity instanceof Iterable<?>)
+                            ? StreamSupport.stream(((Iterable<?>) childEntity).spliterator(), false)
+                            : Stream.of(childEntity);
+
+                    childEntityStream.forEach(childElement -> {
+                        //have to check a linking for retrieved composition with a parent it can be different
+                        assureCompositionInverseLink( entity, metaClass, metaProperty, childElement);
+                        //digging deeper for child element to find any compositions inside
+                        populateAndCheckComposition(childElement, visited);
+                    });
+                });
+    }
+
+    /**
+     * Check that inverse link is set correctly in composition relation. If link is null - fix it (assign to parent).
+     * If link point to different entity (not equals to parent) - throw exception.
+     * @param parent - parent entity
+     * @param parentMetaClass - meta class of parent entity
+     * @param metaProperty - metadata of property which points to child in parent entity
+     * @param child - child entity
+     */
+    protected void assureCompositionInverseLink(Object parent, MetaClass parentMetaClass, MetaProperty metaProperty, Object child) {
+        MetaProperty inverseMetaProperty = metaProperty.getInverse();
+        if (inverseMetaProperty == null) {
+            return;
+        }
+
+        Object inverseValue = EntityValues.getValue(child, inverseMetaProperty.getName());
+        if (inverseValue == null) {
+            //inverse value is null - update it to correct value
+            EntityValues.setValue(child, inverseMetaProperty.getName(), parent);
+        } else {
+            if (!parent.equals(child)) {
+                // parent id doesn't match parent in graph - throw exception
+                String message = String.format(
+                        "Composition attribute '%s' in class '%s' doesn't contain the correct link to parent entity. " +
+                                "Please set correct parent ID '%s' in composition relation.",
+                        metaProperty.getName(),
+                        parentMetaClass.getName(),
+                        EntityValues.getId(parent));
+                log.error(message);
+                throw new GqlEntityValidationException(message);
+            }
+        }
     }
 }

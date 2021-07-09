@@ -38,7 +38,10 @@ class MutationValidationTest extends AbstractGraphQLTest {
     def "should throw exception while creating new DatatypesTestEntity with read-only attributes"() {
         when:
         def response = query(
-                "datafetcher/upsert-datatypes-test-entity.graphql")
+                "datafetcher/upsert-datatypes-test-entity.graphql",
+                asObjectNode('{"entity":{' +
+                        '"readOnlyStringAttr":"read-only",' +
+                        '"id":"6a538099-9dfd-8761-fa32-b496c236dbe8"}}'))
         def error = getErrors(response)[0].getAsJsonObject()
 
         then:
@@ -139,5 +142,36 @@ class MutationValidationTest extends AbstractGraphQLTest {
         getMessage(error) == "Exception while fetching data (/upsert_scr_Car) : Entity validation failed"
         messages.get(1) == "Производитель не указан"
         messages.get(0) == "must match \"[a-zA-Z]{2}\\d{3}\""
+    }
+
+    def "should throw the exception when a reverse attribute does not contain a correct parent entity"() {
+        when:
+        def response = query(
+                "datafetcher/upsert-datatypesTestEntity-composition.gql",
+                asObjectNode('{"parent": {"id": "db9faa31-dfa3-4b97-943c-ba268888cdc3"}}')
+        )
+        def errorMessage = getMessage(getErrors(response)[0].getAsJsonObject())
+
+        then:
+        errorMessage == "Exception while fetching data (/upsert_scr_DatatypesTestEntity) : " +
+                "Composition attribute 'compositionO2Mattr' in class 'scr_DatatypesTestEntity' " +
+                "doesn't contain the correct link to parent entity. " +
+                "Please set correct parent ID 'f17652de-59f6-f2a5-9fd8-1ec69ffaa761' in composition relation."
+    }
+
+    def "should throw the exception when a deeply nested reverse attribute does not contain a correct parent entity"() {
+        when:
+        def response = query(
+                "datafetcher/upsert-datatypesTestEntity-deeply-nested-composition.gql",
+                asObjectNode('{"parent": {"id": "db9faa31-dfa3-4b97-943c-ba268888cdc3"}}')
+        )
+        def errorMessage = getMessage(getErrors(response)[0].getAsJsonObject())
+
+        then:
+        errorMessage == "Exception while fetching data (/upsert_scr_DatatypesTestEntity) : " +
+                "Composition attribute 'nestedComposition' in class 'scr_CompositionO2OTestEntity' " +
+                "doesn't contain the correct link to parent entity. " +
+                "Please set correct parent ID 'f17652de-59f6-f2a5-9fd8-1ec69ffaa733' in composition relation."
+
     }
 }

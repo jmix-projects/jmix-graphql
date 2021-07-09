@@ -76,7 +76,7 @@ type scr_Car {
 }
 
 type Query {
-  scr_CarById(id: String): scr_Car
+  scr_CarById(id: String!): scr_Car
 
    scr_CarCount(
       "expressions to compare scr_Car objects, all items are combined with logical 'AND'"
@@ -97,8 +97,8 @@ type Query {
 }
 
 type Mutation {
-  upsert_scr_Car(car: inp_scr_Car): scr_Car
-   delete_scr_Car(id: String): Void
+  upsert_scr_Car(car: inp_scr_Car!): scr_Car
+   delete_scr_Car(id: String!): Void
 }
 ```
 More schema details and additional types such as filter types and scalars could be found in 
@@ -142,7 +142,19 @@ type Query {
    userInfo: UserInfo
 }
 ```
+#### Input Types Generation in Custom Resolver 
+By default, SPQR creates input types with `Input` suffix:
+```graphql
+input CarInput
+```
+In `jmix-graphql` schema will be generated this type with `inp_` prefix, as in generic types:
+```graphql
+input inp_Car
+```
+
+#### Work with SPQR
 More about how to work with SPQR could be found [in this article](https://www.howtographql.com/graphql-java/11-alternative-approaches/).
+
 
 ### Permission Query
 
@@ -314,6 +326,28 @@ If the parameter doesn't define, so the locale will be received from the current
         key
         value
     }
+}
+```
+
+### User Info Query
+Information about current user can be reached with `userInfo` query
+```
+{
+  userInfo {
+    locale
+    username
+  }
+}
+``` 
+The response will look like
+```
+{
+  "data": {
+    "userInfo": {
+      "locale": "en",
+      "username": "admin"
+    }
+  }
 }
 ```
 
@@ -663,8 +697,4 @@ To add **request headers** tab configure application property:
 ```graphiql.props.variables.headerEditorEnabled=true```
 
 ## Schema Download
-Schema could be downloaded using `graphqurl`
-```
-npm install -g graphqurl
-gq http://localhost:8080/graphql --introspect > schema.graphql
-```
+Schema could be downloaded using [JS GraphQL IDEA Plugin](https://plugins.jetbrains.com/plugin/8097-js-graphql).

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.accesscontext;
+@Experimental
+package io.jmix.graphql.schema;
 
-import io.jmix.core.accesscontext.SpecificOperationAccessContext;
-
-public class GraphqlAccessContext extends SpecificOperationAccessContext {
-    public static final String GRAPHQL_ENABLED = "graphql.enabled";
-    public static final String GRAPHQL_FILE_DOWNLOAD_ENABLED = "graphql.fileDownload.enabled";
-    public static final String GRAPHQL_FILE_UPLOAD_ENABLED = "graphql.fileUpload.enabled";
-
-    public GraphqlAccessContext(String name) {
-        super(name);
-    }
-}
+import io.jmix.core.annotation.Experimental;

@@ -33,7 +33,7 @@ import java.util.List;
 
 import static io.jmix.graphql.schema.BaseTypesGenerator.*;
 
-@Component
+@Component("gql_GenericSchemaGenerator")
 public class GenericSchemaGenerator {
 
     @Autowired
@@ -64,11 +64,11 @@ public class GenericSchemaGenerator {
                             .argument(arg(NamingUtils.LIMIT, "Int", "limit the number of items returned"))
                             .argument((arg(NamingUtils.OFFSET, "Int", "skip the first n items")))
                             // todo array in order by, add ability to order by nested objects
-                            .argument(arg(NamingUtils.ORDER_BY, FilterTypesGenerator.composeFilterOrderByTypeName(metaClass),
+                            .argument(listArg(NamingUtils.ORDER_BY, FilterTypesGenerator.composeFilterOrderByTypeName(metaClass),
                                     "sort the items by one or more fields"))
                             .build());
 
-            // query 'scr_CarById(id)'
+            // query 'scr_CarById(id: UUID!)'
             fields.add(
                     GraphQLFieldDefinition.newFieldDefinition()
                             .name(NamingUtils.composeByIdQueryName(metaClass))
@@ -77,7 +77,7 @@ public class GenericSchemaGenerator {
                             .argument(argNonNull("id", "String"))
                             .build());
 
-            // query 'scr_CarCount()'
+            // query 'scr_CarCount(filter)'
             fields.add(
                     GraphQLFieldDefinition.newFieldDefinition()
                             .name(NamingUtils.composeCountQueryName(metaClass))
@@ -126,7 +126,7 @@ public class GenericSchemaGenerator {
             String outTypeName = NamingUtils.normalizeName(metaClass.getName());
             String inpTypeName = NamingUtils.normalizeInpTypeName(metaClass.getName());
 
-            // mutation upsert_scr_Car(car: scr_Car)
+            // mutation upsert_scr_Car(car: scr_Car!)
             fields.add(
                     GraphQLFieldDefinition.newFieldDefinition()
                             .name(NamingUtils.composeUpsertMutationName(metaClass))
@@ -134,7 +134,7 @@ public class GenericSchemaGenerator {
                             .argument(argNonNull(NamingUtils.uncapitalizedSimpleName(javaClass), inpTypeName))
                             .build());
 
-            // mutation delete_scr_Car(id: UUID)
+            // mutation delete_scr_Car(id: UUID!)
             fields.add(
                     GraphQLFieldDefinition.newFieldDefinition()
                             .name(NamingUtils.composeDeleteMutationName(metaClass))

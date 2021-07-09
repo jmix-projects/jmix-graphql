@@ -30,13 +30,14 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static graphql.Scalars.GraphQLBoolean;
+import static graphql.Scalars.*;
+import static io.jmix.graphql.NamingUtils.INPUT_TYPE_PREFIX;
 import static io.jmix.graphql.schema.BaseTypesGenerator.inpObjectField;
 import static io.jmix.graphql.schema.BaseTypesGenerator.listInpObjectField;
 import static io.jmix.graphql.schema.Types.FilterOperation.*;
 import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLUUID;
 
-@Component
+@Component("gql_FilterTypesGenerator")
 public class FilterTypesGenerator {
 
     protected static final GraphQLEnumType enumSortOrder = EnumTypesGenerator.generateEnumType(Types.SortOrder.class);
@@ -71,10 +72,8 @@ public class FilterTypesGenerator {
         // order by
         types.add(enumSortOrder);
 
-        // filter order by types
+        // filter order by classes types
         allPersistentMetaClasses.forEach(metaClass -> types.add(generateFilterOrderByType(metaClass)));
-
-
         return types;
     }
 
@@ -127,9 +126,8 @@ public class FilterTypesGenerator {
         List<GraphQLInputObjectField> fields = metaClass.getProperties().stream()
                 .map(metaProperty -> {
 
-                    // todo support enums
                     if (metaProperty.getType().equals(MetaProperty.Type.ENUM)) {
-                        return listInpObjectField(metaProperty.getName(), "String", null);
+                        return inpObjectField(metaProperty.getName(), Types.SortOrder.class.getSimpleName(), null);
                     }
 
                     // todo "-to-many" relations are not supported now
@@ -138,7 +136,7 @@ public class FilterTypesGenerator {
                     }
 
                     if (metaProperty.getJavaType().getSimpleName().equals("String")) {
-                        return listInpObjectField(metaProperty.getName(), "SortOrder", null);
+                        return inpObjectField(metaProperty.getName(), enumSortOrder.getName(), null);
                     }
 
                     if (metaProperty.getRange().isClass()) {
@@ -199,6 +197,10 @@ public class FilterTypesGenerator {
         return composeFilterTypeName(name, "OrderBy");
     }
 
+    protected String composeFilterOrderByEnumTypeName(Class<?> enumClass) {
+        return  composeFilterOrderByTypeName(enumClass.getSimpleName());
+    }
+
     protected static String composeFilterConditionTypeName(MetaClass metaClass) {
         return composeFilterTypeName(metaClass.getName(), "FilterCondition");
     }
@@ -209,7 +211,7 @@ public class FilterTypesGenerator {
 
     protected static String composeFilterTypeName(String name, String suffix) {
         // verify that name is normalized
-        if (!name.startsWith("inp_")) {
+        if (!name.startsWith(INPUT_TYPE_PREFIX)) {
             name = NamingUtils.normalizeInpTypeName(name);
         }
         return name + suffix;
@@ -223,8 +225,11 @@ public class FilterTypesGenerator {
         if (Types.numberTypes.contains(scalarType)) {
             return EnumSet.of(EQ, NEQ, GT, GTE, LT, LTE, IN_LIST, NOT_IN_LIST, IS_NULL);
         }
-        if (Types.stringTypes.contains(scalarType)) {
+        if (scalarType.equals(GraphQLString)) {
             return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, STARTS_WITH, ENDS_WITH, CONTAINS, NOT_CONTAINS, IS_NULL);
+        }
+        if (scalarType.equals(GraphQLChar)) {
+            return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, IS_NULL);
         }
         if (Types.dateTimeTypes.contains(scalarType)) {
             return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, IS_NULL);
