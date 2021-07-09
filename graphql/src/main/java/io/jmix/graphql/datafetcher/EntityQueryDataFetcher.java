@@ -13,6 +13,12 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.graphql.NamingUtils;
+import io.jmix.graphql.loader.GraphQLEntityCountDataFetcher;
+import io.jmix.graphql.loader.GraphQLEntityCountDataFetcherContext;
+import io.jmix.graphql.loader.GraphQLEntityListDataFetcher;
+import io.jmix.graphql.loader.GraphQLEntityDataFetcher;
+import io.jmix.graphql.loader.GraphQLEntityDataFetcherContext;
+import io.jmix.graphql.loader.GraphQLEntityListDataFetcherContext;
 import io.jmix.graphql.schema.Types;
 import org.apache.commons.collections4.OrderedMap;
 import org.apache.commons.collections4.map.ListOrderedMap;
@@ -26,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +48,7 @@ public class EntityQueryDataFetcher {
     private final Logger log = LoggerFactory.getLogger(EntityQueryDataFetcher.class);
 
     @Autowired
-    ResponseBuilder responseBuilder;
+    protected ResponseBuilder responseBuilder;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -54,10 +61,19 @@ public class EntityQueryDataFetcher {
     protected EnvironmentUtils environmentUtils;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected QueryDataFetcherLoader queryDataFetcherLoader;
+
+
+    private static final String GRAPHQL_ENTITY_LOADER_METHOD_NAME = GraphQLEntityDataFetcher.class.getDeclaredMethods()[0].getName();
+
+    private static final String GRAPHQL_ENTITIES_LOADER_METHOD_NAME = GraphQLEntityListDataFetcher.class.getDeclaredMethods()[0].getName();
+
+    private static final String GRAPHQL_COUNT_LOADER_METHOD_NAME = GraphQLEntityCountDataFetcher.class.getDeclaredMethods()[0].getName();
 
     public DataFetcher<?> loadEntity(MetaClass metaClass) {
-        return environment -> {
 
+        return environment -> {
             checkCanReadEntity(metaClass);
 
             String id = environment.getArgument("id");
@@ -75,16 +91,24 @@ public class EntityQueryDataFetcher {
             lc.setFetchPlan(fetchPlan);
 
             log.debug("loadEntity: with context {}", lc);
-            Object entity = dataManager.load(lc);
-            if (entity == null) return null;
-
-            return responseBuilder.buildResponse((Entity) entity, fetchPlan, metaClass, environmentUtils.getDotDelimitedProps(environment));
+            if (queryDataFetcherLoader.getCustomEntityFetcher(metaClass.getJavaClass()) == null) {
+                Object entity = dataManager.load(lc);
+                if (entity == null) return null;
+                return responseBuilder.buildResponse((Entity) entity, fetchPlan, metaClass, environmentUtils.getDotDelimitedProps(environment));
+            } else {
+                Object bean = queryDataFetcherLoader.getCustomEntityFetcher(metaClass.getJavaClass());
+                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITY_LOADER_METHOD_NAME,
+                        GraphQLEntityDataFetcherContext.class);
+                return responseBuilder.buildResponse((Entity) method.invoke(bean,
+                        new GraphQLEntityDataFetcherContext(metaClass, id, lc, fetchPlan)), fetchPlan, metaClass,
+                        environmentUtils.getDotDelimitedProps(environment));
+            }
         };
     }
 
     public DataFetcher<List<Map<String, Object>>> loadEntities(MetaClass metaClass) {
-        return environment -> {
 
+        return environment -> {
             checkCanReadEntity(metaClass);
 
             Object filter = environment.getArgument(NamingUtils.FILTER);
@@ -124,7 +148,16 @@ public class EntityQueryDataFetcher {
             LoadContext<Object> ctx = new LoadContext<>(metaClass);
             ctx.setQuery(query);
             ctx.setFetchPlan(fetchPan);
-            List<Object> objects = dataManager.loadList(ctx);
+            List<Object> objects;
+            if (queryDataFetcherLoader.getCustomEntitiesFetcher(metaClass.getJavaClass()) == null) {
+                objects = dataManager.loadList(ctx);
+            } else {
+                Object bean = queryDataFetcherLoader.getCustomEntitiesFetcher(metaClass.getJavaClass());
+                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITIES_LOADER_METHOD_NAME,
+                        GraphQLEntityListDataFetcherContext.class);
+                objects = (List<Object>) method.invoke(bean, new GraphQLEntityListDataFetcherContext(metaClass, ctx, condition,
+                        orderByConditions, limit, offset, fetchPan));
+            }
 
             Set<String> props = environmentUtils.getDotDelimitedProps(environment);
             List<Map<String, Object>> entitiesAsMap = objects.stream()
@@ -202,8 +235,8 @@ public class EntityQueryDataFetcher {
     }
 
     public DataFetcher<?> countEntities(MetaClass metaClass) {
-        return environment -> {
 
+        return environment -> {
             checkCanReadEntity(metaClass);
 
             Object filter = environment.getArgument(NamingUtils.FILTER);
@@ -214,7 +247,15 @@ public class EntityQueryDataFetcher {
 
             LoadContext<? extends Entity> lc = new LoadContext<>(metaClass);
             lc.setQuery(query);
-            long count = dataManager.getCount(lc);
+            long count;
+            if (queryDataFetcherLoader.getCustomCountFetcher(metaClass.getJavaClass()) == null) {
+                count = dataManager.getCount(lc);
+            } else {
+                Object bean = queryDataFetcherLoader.getCustomCountFetcher(metaClass.getJavaClass());
+                Method method = bean.getClass().getDeclaredMethod(GRAPHQL_COUNT_LOADER_METHOD_NAME, GraphQLEntityCountDataFetcherContext.class);
+                count = (Long) method.invoke(bean, new GraphQLEntityCountDataFetcherContext(metaClass, lc,
+                        condition));
+            }
             log.debug("countEntities return {} for {}", count, metaClass.getName());
             return count;
         };
@@ -264,4 +305,6 @@ public class EntityQueryDataFetcher {
 
         return query;
     }
+
+
 }
