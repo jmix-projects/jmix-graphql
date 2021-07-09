@@ -73,7 +73,8 @@ public class EntityMutationDataFetcher {
 
     // todo batch commit with association not supported now (not transferred from cuba-graphql)
     public DataFetcher<?> upsertEntity(MetaClass metaClass) {
-        Map<Class<?>, Object> entityResultGetter = getCustomEntityUpdater();
+        entityUpdater = getCustomEntityUpdater();
+        entityUpsertResultGetter = getCustomEntityUpsertResultGetter();
         return environment -> {
 
             Class<Object> javaClass = metaClass.getJavaClass();
@@ -109,8 +110,8 @@ public class EntityMutationDataFetcher {
 
             FetchPlan fetchPlan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
             Object mainEntity = getMainEntity(objects, metaClass);
-            if (entityResultGetter.containsKey(metaClass.getJavaClass())) {
-                Object bean = entityResultGetter.get(metaClass.getJavaClass());
+            if (entityUpsertResultGetter.containsKey(metaClass.getJavaClass())) {
+                Object bean = entityUpsertResultGetter.get(metaClass.getJavaClass());
                 Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITIES_UPSERT_RESULT_GETTER_METHOD_NAME,
                         GraphQLUpsertResultGetterContext.class);
                 mainEntity = method.invoke(bean, new GraphQLUpsertResultGetterContext(metaClass,
