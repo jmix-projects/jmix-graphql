@@ -1000,7 +1000,7 @@ scalar LocalDate
 "Date type"
 scalar LocalDateTime
 
-"Date type"
+"Local time type"
 scalar LocalTime
 
 scalar Long
@@ -1008,7 +1008,7 @@ scalar Long
 "Date type"
 scalar OffsetDateTime
 
-"Date type"
+"Offset time type"
 scalar OffsetTime
 
 "Built-in Short as Int"

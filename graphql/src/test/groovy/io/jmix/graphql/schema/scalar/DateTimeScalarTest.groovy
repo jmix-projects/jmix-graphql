@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.schema.scalars
+package io.jmix.graphql.schema.scalar
 
 import graphql.language.StringValue
 import graphql.schema.Coercing
 import graphql.schema.CoercingParseLiteralException
 import graphql.schema.CoercingSerializeException
-import io.jmix.graphql.schema.scalar.TimeScalar
 import org.apache.commons.lang3.time.DateUtils
 import spock.lang.Specification
 
-import static io.jmix.graphql.schema.scalar.CustomScalars.SERIALIZATION_TIME_FORMAT
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 /*
  * Copyright 2021 Haulmont.
@@ -42,9 +43,9 @@ import static io.jmix.graphql.schema.scalar.CustomScalars.SERIALIZATION_TIME_FOR
  * limitations under the License.
  */
 
-class TimeScalarTest extends Specification {
+class DateTimeScalarTest extends Specification {
 
-    private final TimeScalar scalar = new TimeScalar()
+    private final DateTimeScalar scalar = new DateTimeScalar()
     private Coercing coercing
 
     @SuppressWarnings('unused')
@@ -52,33 +53,33 @@ class TimeScalarTest extends Specification {
         coercing = scalar.getCoercing()
     }
 
-    def "time scalar test"() {
+    def "dateTime scalar test"() {
         given:
-        def stringDate = "23:59:59"
-        def time = DateUtils.parseDate(stringDate.trim(), SERIALIZATION_TIME_FORMAT.toPattern());
+        def stringDate = "2021-01-01T23:59:59"
+        def temporalAccessor = LocalDateTime.parse(stringDate).atZone(ZoneId.systemDefault())
+        def date = Date.from(Instant.from(temporalAccessor))
         def parsedLiteral
         def parsedValue
         def serialized
         def nullParsedLiteral
         def nullParsedValue
-        def midnight = DateUtils.parseDate("00:00:00", SERIALIZATION_TIME_FORMAT.toPattern());
 
         when:
         parsedLiteral = (Date) this.coercing.parseLiteral(new StringValue(stringDate))
-        nullParsedValue = (Date) this.coercing.parseValue("")
-        nullParsedLiteral = (Date) this.coercing.parseLiteral(new StringValue(""))
         parsedValue = (Date) this.coercing.parseValue(stringDate)
-        serialized = this.coercing.serialize(time)
+        serialized = this.coercing.serialize(date)
+        nullParsedLiteral = (Date) this.coercing.parseLiteral(new StringValue(""))
+        nullParsedValue = (Date) this.coercing.parseLiteral(new StringValue(""))
 
         then:
-        DateUtils.isSameDay(parsedLiteral, time)
-        DateUtils.isSameDay(parsedValue, time)
+        DateUtils.isSameDay(parsedLiteral, date)
+        DateUtils.isSameDay(parsedValue, date)
         serialized == stringDate
-        DateUtils.isSameDay(nullParsedLiteral, midnight)
-        DateUtils.isSameDay(nullParsedValue, midnight)
+        DateUtils.isSameDay(nullParsedLiteral, Date.from(Instant.EPOCH))
+        DateUtils.isSameDay(nullParsedValue, Date.from(Instant.EPOCH))
     }
 
-    def "time scalar coercing throws CoercingSerializeException"() {
+    def "dateTime scalar coercing throws CoercingSerializeException"() {
         when:
         coercing.serialize("")
 
@@ -87,7 +88,7 @@ class TimeScalarTest extends Specification {
         exception.message == "Expected type 'Date' but was 'String'."
     }
 
-    def "time scalar coercing throws CoercingParseLiteralException with parseLiteral"() {
+    def "dateTime scalar coercing throws CoercingParseLiteralException with parseLiteral"() {
         when:
         coercing.parseLiteral("")
 
@@ -96,7 +97,7 @@ class TimeScalarTest extends Specification {
         exception.message == "Expected type 'StringValue' but was 'String'."
     }
 
-    def "time scalar coercing throws CoercingParseLiteralException with parseValue"() {
+    def "dateTime scalar coercing throws CoercingParseLiteralException with parseValue"() {
         when:
         coercing.parseValue(new StringValue(""))
 
@@ -105,12 +106,12 @@ class TimeScalarTest extends Specification {
         exception.message == "Expected type 'String' but was 'StringValue'."
     }
 
-    def "time scalar throws CoercingParseLiteralException with wrong value"() {
+    def "dateTime scalar throws CoercingParseLiteralException with wrong value"() {
         when:
         coercing.parseLiteral(new StringValue("1"))
 
         then:
         def exception = thrown(CoercingParseLiteralException)
-        exception.message == "Please use the format 'HH:mm:ss' or 'HH:mm'"
+        exception.message == "Please use the format 'yyyy-MM-dd'T'HH:mm:ss'"
     }
 }

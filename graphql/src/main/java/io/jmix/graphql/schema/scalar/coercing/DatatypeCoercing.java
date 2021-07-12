@@ -19,17 +19,31 @@ package io.jmix.graphql.schema.scalar.coercing;
 import graphql.language.StringValue;
 import graphql.schema.Coercing;
 import graphql.schema.CoercingParseLiteralException;
+import graphql.schema.CoercingSerializeException;
+import io.jmix.core.metamodel.datatype.Datatype;
 
 import java.text.ParseException;
 import java.time.format.DateTimeParseException;
 
-@Deprecated //todo use DatatypeCoercing
-public abstract class BaseDateCoercing<I, O> implements Coercing<I, O> {
+public class DatatypeCoercing<I> implements Coercing<I, String> {
 
-    private final String format;
+    protected Class<I> type;
+    protected Datatype<I> datatype;
+    protected String incorrectFormatMessage;
 
-    public BaseDateCoercing(String format) {
-        this.format = format;
+    public DatatypeCoercing(Class<I> type, Datatype<I> datatype, String incorrectFormatMessage) {
+        this.type = type;
+        this.datatype = datatype;
+        this.incorrectFormatMessage = incorrectFormatMessage;
+    }
+
+    @Override
+    public String serialize(Object o) throws CoercingSerializeException {
+        if (!o.getClass().isAssignableFrom(type)) {
+            throw new CoercingSerializeException(
+                    "Expected type '" + type.getSimpleName() + "' but was '" + o.getClass().getSimpleName() + "'.");
+        }
+        return datatype.format(o);
     }
 
     @Override
@@ -37,9 +51,9 @@ public abstract class BaseDateCoercing<I, O> implements Coercing<I, O> {
         if (input instanceof String) {
             String value = (String) input;
             try {
-                return parseString(value);
+                return datatype.parse(value);
             } catch (DateTimeParseException | ParseException exception) {
-                throw new CoercingParseLiteralException("Please use the format " + format);
+                throw new CoercingParseLiteralException(incorrectFormatMessage);
             }
         }
         throw new CoercingParseLiteralException(
@@ -49,18 +63,11 @@ public abstract class BaseDateCoercing<I, O> implements Coercing<I, O> {
     @Override
     public I parseLiteral(Object input) {
         if (input instanceof StringValue) {
-            String value = ((StringValue) input).getValue();
-            try {
-                return parseString(value);
-            } catch (Exception exception) {
-                throw new CoercingParseLiteralException("Please use the format " + format);
-            }
+            return parseValue(((StringValue) input).getValue());
         }
         throw new CoercingParseLiteralException(
                 "Expected type 'StringValue' but was '" + input.getClass().getSimpleName() + "'.");
 
     }
-
-    protected abstract I parseString(String value) throws ParseException;
 
 }

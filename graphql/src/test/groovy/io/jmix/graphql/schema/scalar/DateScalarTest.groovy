@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.graphql.schema.scalars
+package io.jmix.graphql.schema.scalar
 
 import graphql.language.StringValue
 import graphql.schema.Coercing
 import graphql.schema.CoercingParseLiteralException
 import graphql.schema.CoercingSerializeException
-import io.jmix.graphql.schema.scalar.DateScalar
 import org.apache.commons.lang3.time.DateUtils
 import spock.lang.Specification
 

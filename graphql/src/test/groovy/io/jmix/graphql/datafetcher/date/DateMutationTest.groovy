@@ -21,6 +21,24 @@ import spock.lang.Ignore
 
 class DateMutationTest extends AbstractGraphQLTest {
 
+    def "should upsert time field with seconds"() {
+        when:
+        def response = query(
+                "datafetcher/upsert-datatypes-test-entity.graphql",
+                asObjectNode('{"entity":{"timeAttr":"10:33:12"}}'))
+        then:
+        response.get('$.data.upsert_scr_DatatypesTestEntity.timeAttr') == "10:33:12"
+    }
+
+    def "should upsert time field without seconds"() {
+        when:
+        def response = query(
+                "datafetcher/upsert-datatypes-test-entity.graphql",
+                asObjectNode('{"entity":{"timeAttr":"11:11"}}'))
+        then:
+        response.get('$.data.upsert_scr_DatatypesTestEntity.timeAttr') == "11:11:00"
+    }
+
     def "should create entity with date types"() {
         when:
         def response = query(
