@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Nullable;
@@ -50,6 +51,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -87,36 +89,17 @@ public class GraphQLFilesController extends GraphQLController<NativeWebRequest> 
     )
     @ResponseBody
     public Object executeMultipartPost(@RequestPart("operations") String operations,
-                                       @RequestPart("map") String map,
-                                       MultipartHttpServletRequest multiPartRequest,
-                                       NativeWebRequest webRequest) throws IOException, ServletException {
-
+                                              @RequestPart("map") String map,
+                                              @RequestPart(value = "storageName", required = false) String storageName,
+                                              MultipartHttpServletRequest multiPartRequest,
+                                              NativeWebRequest webRequest) throws IOException, ServletException {
         checkFileUploadPermission();
 
-//        FileStorage fileStorage = getFileStorage(storageName);
-//        try {
-//            String contentLength = request.getHeader("Content-Length");
-//
-//            long size = 0;
-//            try {
-//                size = Long.parseLong(contentLength);
-//            } catch (NumberFormatException ignored) {
-//            }
-//
-//            ServletInputStream is = request.getInputStream();
-//            name = Objects.toString(name, "");
-//            FileRef fileRef = uploadToFileStorage(fileStorage, is, name);
-//
-//            return createFileInfoResponseEntity(request, fileRef, name, size);
-//        } catch (Exception e) {
-//            log.error("File upload failed", e);
-//            throw new RestAPIException("File upload failed", "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR, e);
-//        }
-
+        FileStorage fileStorage = getFileStorage(storageName);
         GraphQLRequest graphQLRequest = new ObjectMapper().readerFor(GraphQLRequest.class).readValue(operations);
         Map<String, ArrayList<String>> fileMap = new ObjectMapper().readerFor(Map.class).readValue(map);
 
-        mapRequestFilesToVariables(multiPartRequest, graphQLRequest, fileMap);
+        mapRequestFilesToVariables(multiPartRequest, graphQLRequest, fileMap, fileStorage);
         return this.executeJsonPost(graphQLRequest, new GraphQLRequest(null, null, null, null), webRequest);
     }
 
@@ -125,14 +108,19 @@ public class GraphQLFilesController extends GraphQLController<NativeWebRequest> 
      * This makes it possible to use a file input like a normal parameter in a GraphQLApi Method.
      */
     private void mapRequestFilesToVariables(MultipartHttpServletRequest multiPartRequest, GraphQLRequest graphQLRequest,
-                                            Map<String, ArrayList<String>> fileMap) throws IOException, ServletException {
+                                            Map<String, ArrayList<String>> fileMap, FileStorage storage) throws IOException, ServletException {
         for (Map.Entry<String, ArrayList<String>> pair : fileMap.entrySet()) {
             String targetVariable = pair.getValue().get(0).replace("variables.", "");
             if(graphQLRequest.getVariables().containsKey(targetVariable)) {
-                Part correspondingFile = multiPartRequest.getPart(pair.getKey());
-                graphQLRequest.getVariables().put(targetVariable, correspondingFile);
+//                Part correspondingFile = multiPartRequest.getPart(pair.getKey());
+                saveFileIntoStorage(multiPartRequest.getFileMap().get(pair.getKey()), storage);
+                graphQLRequest.getVariables().put(targetVariable, multiPartRequest.getFileMap().get(pair.getKey()));
             }
         }
+    }
+
+    protected FileRef saveFileIntoStorage(MultipartFile multipartFile, FileStorage storage) throws IOException {
+        return storage.saveStream(multipartFile.getName(), multipartFile.getInputStream());
     }
 
     protected FileStorage getFileStorage(@Nullable String storageName) {
@@ -142,10 +130,10 @@ public class GraphQLFilesController extends GraphQLController<NativeWebRequest> 
             try {
                 return fileStorageLocator.getByName(storageName);
             } catch (IllegalArgumentException e) {
-                throw new Exception("Invalid storage name",
-                        String.format("Cannot find FileStorage with the given name: '%s'", storageName),
-                        HttpStatus.BAD_REQUEST,
-                        e);
+//                throw new Exception("Invalid storage name",
+//                        String.format("Cannot find FileStorage with the given name: '%s'", storageName),
+//                        HttpStatus.BAD_REQUEST,
+//                        e);
             }
         }
         return null;
