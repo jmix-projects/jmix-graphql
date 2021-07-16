@@ -46,22 +46,23 @@ class LocalDateScalarTest extends Specification {
         def parsedLiteral
         def parsedValue
         def serialized
-        def nullParsedLiteral
-        def nullParsedValue
 
         when:
         parsedLiteral = (LocalDate) coercing.parseLiteral(stringDate)
         parsedValue = (LocalDate) coercing.parseValue(stringDate.getValue())
         serialized = coercing.serialize(localDate)
-        nullParsedLiteral = (LocalDate) coercing.parseLiteral(new StringValue(""))
-        nullParsedValue = (LocalDate) coercing.parseValue("")
 
         then:
         parsedLiteral.isEqual(localDate)
         parsedValue.isEqual(localDate)
         serialized == stringDate.getValue()
-        nullParsedLiteral.isEqual(LocalDate.MIN)
-        nullParsedValue.isEqual(LocalDate.MIN)
+    }
+
+    def "localDate scalar should return null on parse empty string" () {
+        when:
+        def date = coercing.parseLiteral(new StringValue(""))
+        then:
+        date == null
     }
 
     def "localDate scalar throws CoercingSerializeException"() {

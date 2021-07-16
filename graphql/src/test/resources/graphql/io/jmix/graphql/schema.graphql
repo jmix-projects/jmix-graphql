@@ -994,10 +994,10 @@ scalar Date
 "Date type with time"
 scalar DateTime
 
-"Date type"
+"Local date type"
 scalar LocalDate
 
-"Date type"
+"Local date type with time"
 scalar LocalDateTime
 
 "Local time type"
@@ -1005,7 +1005,7 @@ scalar LocalTime
 
 scalar Long
 
-"Date type"
+"Date type with offset"
 scalar OffsetDateTime
 
 "Offset time type"

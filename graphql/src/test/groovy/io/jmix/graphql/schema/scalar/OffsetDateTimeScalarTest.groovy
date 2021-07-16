@@ -46,22 +46,23 @@ class OffsetDateTimeScalarTest extends Specification {
         def parsedLiteral
         def parsedValue
         def serialized
-        def nullParsedLiteral
-        def nullParsedValue
 
         when:
         parsedLiteral = (OffsetDateTime) coercing.parseLiteral(stringDate)
         parsedValue = (OffsetDateTime) coercing.parseValue(stringDate.getValue())
         serialized = coercing.serialize(offsetDateTime)
-        nullParsedLiteral = (OffsetDateTime) coercing.parseLiteral(new StringValue(""))
-        nullParsedValue = (OffsetDateTime) coercing.parseValue("")
 
         then:
         parsedLiteral.isEqual(offsetDateTime)
         parsedValue.isEqual(offsetDateTime)
         serialized == stringDate.getValue()
-        nullParsedLiteral.isEqual(OffsetDateTime.MIN)
-        nullParsedValue.isEqual(OffsetDateTime.MIN)
+    }
+
+    def "offsetDateTime scalar should return null on parse empty string" () {
+        when:
+        def date = coercing.parseLiteral(new StringValue(""))
+        then:
+        date == null
     }
 
     def "OffsetDateTime scalar throws CoercingSerializeException"() {
