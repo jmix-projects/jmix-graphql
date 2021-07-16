@@ -7,13 +7,10 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.graphql.NamingUtils;
-import io.jmix.graphql.loader.GraphQLEntityCountDataFetcher;
-import io.jmix.graphql.loader.GraphQLEntityCountDataFetcherContext;
-import io.jmix.graphql.loader.GraphQLEntityListDataFetcher;
-import io.jmix.graphql.loader.GraphQLEntityDataFetcher;
-import io.jmix.graphql.loader.GraphQLEntityDataFetcherContext;
-import io.jmix.graphql.loader.GraphQLEntityListDataFetcherContext;
+import io.jmix.graphql.loader.*;
 import io.jmix.graphql.schema.Types;
+import org.apache.commons.collections4.OrderedMap;
+import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -134,6 +131,12 @@ public class EntityQueryDataFetcher {
                 Object bean = queryDataFetcherLoader.getCustomEntitiesFetcher(metaClass.getJavaClass());
                 Method method = bean.getClass().getDeclaredMethod(GRAPHQL_ENTITIES_LOADER_METHOD_NAME,
                         GraphQLEntityListDataFetcherContext.class);
+
+                // workaround - we don't support yet a set of order by conditions in 1.0.x
+                OrderedMap<String, Types.SortOrder> orderByConditions = new ListOrderedMap<>();
+                if (orderByPathAndOrder != null) {
+                    orderByConditions.put(orderByPathAndOrder.getKey(), orderByPathAndOrder.getValue());
+                }
                 objects = (List<Object>) method.invoke(bean, new GraphQLEntityListDataFetcherContext(metaClass, ctx, condition,
                         orderByConditions, limit, offset, fetchPan));
             }
