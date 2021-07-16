@@ -28,6 +28,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.MetadataUtils;
 import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.schema.scalar.CustomScalars;
+import io.jmix.graphql.schema.scalar.ScalarTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,6 +59,8 @@ public class FilterTypesGenerator {
     MetadataTools metadataTools;
     @Autowired
     private BaseTypesGenerator baseTypesGenerator;
+    @Autowired
+    ScalarTypes scalarTypes;
 
     public Collection<GraphQLType> generateFilterTypes() {
         Collection<GraphQLType> types = new ArrayList<>();
@@ -71,7 +74,8 @@ public class FilterTypesGenerator {
                 .forEach(metaClass -> types.add(generateFilterConditionType(metaClass)));
 
         // scalar filter conditions
-        Map<String, GraphQLInputObjectType> scalarFilterConditionTypesMap = Arrays.stream(Types.scalars)
+        Map<String, GraphQLInputObjectType> scalarFilterConditionTypesMap =
+                scalarTypes.scalars().stream()
                 // todo byte type not supported now
                 //GraphQLVoid excluded because no need to filter such scalar type
                 .filter(type -> !type.getName().equals(Scalars.GraphQLByte.getName())
@@ -207,10 +211,6 @@ public class FilterTypesGenerator {
         return composeFilterTypeName(name, "OrderBy");
     }
 
-    protected String composeFilterOrderByEnumTypeName(Class<?> enumClass) {
-        return  composeFilterOrderByTypeName(enumClass.getSimpleName());
-    }
-
     protected static String composeFilterConditionTypeName(MetaClass metaClass) {
         return composeFilterTypeName(metaClass.getName(), "FilterCondition");
     }
@@ -244,7 +244,7 @@ public class FilterTypesGenerator {
         if (Types.dateTimeTypes.contains(scalarType)) {
             return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, GT, GTE, LT, LTE, IS_NULL);
         }
-        if (Types.timeTypes.contains(scalarType)) {
+        if (scalarTypes.isTimeType(scalarType)) {
             return EnumSet.of(EQ, NEQ, GT, GTE, LT, LTE, IS_NULL);
         }
         if (scalarType.equals(GraphQLBoolean)) {

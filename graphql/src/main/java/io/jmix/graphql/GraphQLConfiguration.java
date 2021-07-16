@@ -39,6 +39,7 @@ import io.jmix.graphql.schema.GenericSchemaGenerator;
 import io.jmix.graphql.schema.JmixTypeInfoGenerator;
 import io.jmix.graphql.schema.MessageTypesGenerator;
 import io.jmix.graphql.schema.PermissionTypesGenerator;
+import io.jmix.graphql.schema.scalar.ScalarTypes;
 import io.jmix.graphql.security.SpecificPermissionInstrumentation;
 import io.jmix.graphql.spqr.SpqrSchemaGenerator;
 import io.leangen.geantyref.GenericTypeReflector;
@@ -125,6 +126,8 @@ public class GraphQLConfiguration {
     protected Messages messages;
     @Autowired
     protected JmixTypeInfoGenerator jmixTypeInfoGenerator;
+    @Autowired
+    protected ScalarTypes scalarTypes;
 
 
     @Bean
@@ -138,10 +141,8 @@ public class GraphQLConfiguration {
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() {
-        return builder -> {
-            builder.serializerByType(Timestamp.class,
-                    new DateSerializer(false, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")));
-        };
+        return builder -> builder.serializerByType(Timestamp.class,
+                new DateSerializer(false, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")));
     }
 
     @Bean
@@ -156,7 +157,7 @@ public class GraphQLConfiguration {
         // filter
         types.addAll(filterTypesGenerator.generateFilterTypes());
         // scalars
-        types.addAll(Arrays.asList(Types.scalars));
+        types.addAll(scalarTypes.scalars());
         // permissions
         types.addAll(permissionTypesGenerator.generatePermissionTypes());
         // messages
