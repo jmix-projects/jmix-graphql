@@ -2,6 +2,7 @@ package io.jmix.graphql.schema.scalar;
 
 import graphql.schema.GraphQLScalarType;
 import io.jmix.graphql.schema.scalar.coercing.BigDecimalCoercing;
+import io.jmix.graphql.schema.scalar.coercing.FileRefCoercing;
 import io.jmix.graphql.schema.scalar.coercing.LongCoercing;
 import io.jmix.graphql.schema.scalar.coercing.UUIDCoercing;
 import io.jmix.graphql.schema.scalar.coercing.VoidCoercing;
@@ -39,4 +40,6 @@ public class CustomScalars {
     public static GraphQLScalarType GraphQLVoid = GraphQLScalarType.newScalar()
             .name("Void").coercing(new VoidCoercing()).build();
 
+    public static GraphQLScalarType GraphQLFile = GraphQLScalarType.newScalar()
+            .name("FileRef").coercing(new FileRefCoercing()).build();
 }

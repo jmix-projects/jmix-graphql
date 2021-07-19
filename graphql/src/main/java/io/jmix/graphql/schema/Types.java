@@ -85,6 +85,7 @@ public class Types {
             Scalars.GraphQLShort,
             Scalars.GraphQLString,
             CustomScalars.GraphQLVoid,
+            CustomScalars.GraphQLFile,
             CustomScalars.GraphQLLocalDateTime,
             CustomScalars.GraphQLLocalDate,
             CustomScalars.GraphQLLocalTime,

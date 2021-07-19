@@ -25,6 +25,7 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.Metadata;
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
+import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.spqr.spring.web.GraphQLController;
 import io.leangen.graphql.spqr.spring.web.dto.GraphQLRequest;
 import io.leangen.graphql.spqr.spring.web.mvc.GraphQLMvcExecutor;
@@ -60,6 +61,11 @@ import java.util.Objects;
 public class GraphQLFilesController extends GraphQLController<NativeWebRequest> {
 
     @Autowired
+    public GraphQLFilesController(GraphQL graphQL, GraphQLMvcExecutor executor) {
+        super(graphQL, executor);
+    }
+
+    @Autowired
     protected Metadata metadata;
 
     @Autowired
@@ -71,10 +77,6 @@ public class GraphQLFilesController extends GraphQLController<NativeWebRequest> 
     private static final Logger log = LoggerFactory.getLogger(GraphQLFilesController.class);
 
 
-    @Autowired
-    public GraphQLFilesController(GraphQL graphQL, GraphQLMvcExecutor executor) {
-        super(graphQL, executor);
-    }
 
     /**
      * For Requests that follow the GraphQL Multipart Request Spec from: https://github.com/jaydenseric/graphql-multipart-request-spec
@@ -112,9 +114,9 @@ public class GraphQLFilesController extends GraphQLController<NativeWebRequest> 
         for (Map.Entry<String, ArrayList<String>> pair : fileMap.entrySet()) {
             String targetVariable = pair.getValue().get(0).replace("variables.", "");
             if(graphQLRequest.getVariables().containsKey(targetVariable)) {
-//                Part correspondingFile = multiPartRequest.getPart(pair.getKey());
-                saveFileIntoStorage(multiPartRequest.getFileMap().get(pair.getKey()), storage);
-                graphQLRequest.getVariables().put(targetVariable, multiPartRequest.getFileMap().get(pair.getKey()));
+                MultipartFile correspondingFile = multiPartRequest.getFileMap().get(pair.getKey());
+//                saveFileIntoStorage(multiPartRequest.getFileMap().get(pair.getKey()), storage);
+                graphQLRequest.getVariables().put(targetVariable, correspondingFile);
             }
         }
     }
@@ -155,4 +157,5 @@ public class GraphQLFilesController extends GraphQLController<NativeWebRequest> 
             throw new AccessDeniedException("File upload failed. File upload is not permitted");
         }
     }
+
 }

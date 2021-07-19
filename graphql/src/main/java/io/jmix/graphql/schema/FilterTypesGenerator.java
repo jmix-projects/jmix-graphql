@@ -35,6 +35,7 @@ import static io.jmix.graphql.NamingUtils.INPUT_TYPE_PREFIX;
 import static io.jmix.graphql.schema.BaseTypesGenerator.inpObjectField;
 import static io.jmix.graphql.schema.BaseTypesGenerator.listInpObjectField;
 import static io.jmix.graphql.schema.Types.FilterOperation.*;
+import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLFile;
 import static io.jmix.graphql.schema.scalar.CustomScalars.GraphQLUUID;
 
 @Component("gql_FilterTypesGenerator")
@@ -239,6 +240,9 @@ public class FilterTypesGenerator {
         }
         if (scalarType.equals(GraphQLBoolean)) {
             return EnumSet.of(EQ, NEQ, IS_NULL);
+        }
+        if (scalarType.equals(GraphQLFile)) {
+            return EnumSet.of(IS_NULL);
         }
 
         throw new UnsupportedOperationException("Can't define the operation type for " + scalarType);

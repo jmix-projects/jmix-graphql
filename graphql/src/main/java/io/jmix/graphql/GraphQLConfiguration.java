@@ -18,8 +18,10 @@ package io.jmix.graphql;
 
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import graphql.execution.instrumentation.Instrumentation;
+import graphql.kickstart.servlet.apollo.ApolloScalars;
 import graphql.schema.FieldCoordinates;
 import graphql.schema.GraphQLCodeRegistry;
+import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
 import io.jmix.core.AccessManager;
@@ -36,6 +38,7 @@ import io.jmix.graphql.schema.*;
 import io.jmix.graphql.security.SpecificPermissionInstrumentation;
 import io.jmix.graphql.spqr.SpqrSchemaGenerator;
 import io.leangen.geantyref.GenericTypeReflector;
+import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.metadata.strategy.query.AbstractResolverBuilder;
 import io.leangen.graphql.metadata.strategy.query.MethodInvokerFactory;
 import io.leangen.graphql.metadata.strategy.query.ResolverBuilder;
