@@ -18,6 +18,7 @@ package io.jmix.graphql.schema;
 
 import graphql.Scalars;
 import graphql.schema.*;
+import io.jmix.core.FileRef;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.MetadataUtils;
@@ -192,6 +193,9 @@ public class BaseTypesGenerator {
         }
         if (OffsetTime.class.isAssignableFrom(javaType)) {
             return CustomScalars.GraphQLOffsetTime.getName();
+        }
+        if (FileRef.class.isAssignableFrom(javaType)) {
+            return CustomScalars.GraphQLFile.getName();
         }
 
 //        log.warn("getDatatypeFieldTypeName: can't resolve type for datatype meta property {} class {}", metaProperty, javaType);
