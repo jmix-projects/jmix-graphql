@@ -1,7 +1,13 @@
 package io.jmix.graphql.datafetcher;
 
 import graphql.schema.DataFetcher;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.DataManager;
+import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.LoadContext;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.Sort;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
@@ -20,7 +26,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component("gql_EntityQueryDataFetcher")
@@ -53,7 +63,14 @@ public class EntityQueryDataFetcher {
             String id = environment.getArgument("id");
             LoadContext<?> lc = new LoadContext<>(metaClass);
             // todo support not only UUID types of id
-            lc.setId(UUID.fromString(id));
+            try{
+                UUID uuid = UUID.fromString(id);
+                lc.setId(UUID.fromString(id));
+                //do something
+            } catch (IllegalArgumentException exception){
+                lc.setId(id);
+            }
+
             FetchPlan fetchPlan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
             lc.setFetchPlan(fetchPlan);
 

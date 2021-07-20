@@ -18,16 +18,52 @@ package io.jmix.graphql.schema.scalar.coercing;
 
 import graphql.schema.CoercingParseValueException;
 import graphql.schema.CoercingSerializeException;
+import io.jmix.core.FileRef;
+import io.jmix.core.FileStorage;
+import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
+import io.jmix.graphql.service.FileService;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.FileNotFoundException;
+import java.util.AbstractMap;
 
 public class FileRefCoercing extends BaseScalarCoercing {
 
     @Override
     public Object serialize(Object o) throws CoercingSerializeException {
-        return null;
+        return ((FileRef) o).toString();
     }
 
     @Override
     public Object parseValue(Object o) throws CoercingParseValueException {
+        String storageName = null;
+        FileService fileService = FileService.get();
+        try {
+            if (o instanceof AbstractMap.SimpleEntry) {
+
+                    storageName = ((AbstractMap.SimpleEntry<String, MultipartFile>) o).getKey();
+                    FileStorage fileStorage = fileService.getFileStorage(storageName);
+                    MultipartFile multipartFile = ((AbstractMap.SimpleEntry<String, MultipartFile>) o).getValue();
+
+                    FileRefDatatype refDatatype = new FileRefDatatype();
+                    FileRef fileRef = fileService.saveFileIntoStorage(multipartFile, fileStorage);
+                    return refDatatype.format(fileRef);
+
+            }
+            if (o instanceof String) {
+
+                    FileRef fileRef = FileRef.fromString((String) o);
+                    FileStorage fileStorage = fileService.getFileStorage(fileRef.getStorageName());
+                    if (!fileStorage.fileExists(fileRef)) {
+                        throw new FileNotFoundException();
+                    }
+                    return o;
+            }
+        }
+        catch (Exception e) {
+            throw new CoercingParseValueException("File storage with name " + storageName + " not found");
+        }
         return null;
     }
+
 }

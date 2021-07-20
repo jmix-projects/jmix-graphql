@@ -6,6 +6,12 @@ import io.jmix.graphql.schema.scalar.coercing.FileRefCoercing;
 import io.jmix.graphql.schema.scalar.coercing.LongCoercing;
 import io.jmix.graphql.schema.scalar.coercing.UUIDCoercing;
 import io.jmix.graphql.schema.scalar.coercing.VoidCoercing;
+import io.jmix.graphql.service.FileService;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 
@@ -24,6 +30,8 @@ public class CustomScalars {
     public static GraphQLScalarType GraphQLOffsetDateTime = new OffsetDateTimeScalar();
     public static GraphQLScalarType GraphQLOffsetTime = new OffsetTimeScalar();
 
+    private static ApplicationContext applicationContext;
+
     public static GraphQLScalarType GraphQLLong = GraphQLScalarType.newScalar()
             .name("Long")
             .coercing(new LongCoercing()).build();
@@ -41,5 +49,6 @@ public class CustomScalars {
             .name("Void").coercing(new VoidCoercing()).build();
 
     public static GraphQLScalarType GraphQLFile = GraphQLScalarType.newScalar()
-            .name("FileRef").coercing(new FileRefCoercing()).build();
+            .name("Upload").coercing(new FileRefCoercing()).build();
+
 }
