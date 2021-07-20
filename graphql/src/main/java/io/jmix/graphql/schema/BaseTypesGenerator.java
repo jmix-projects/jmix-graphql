@@ -17,6 +17,7 @@
 package io.jmix.graphql.schema;
 
 import graphql.schema.*;
+import io.jmix.core.FileRef;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.NamingUtils;
