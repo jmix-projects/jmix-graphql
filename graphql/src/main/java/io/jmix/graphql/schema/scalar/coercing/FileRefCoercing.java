@@ -18,16 +18,37 @@ package io.jmix.graphql.schema.scalar.coercing;
 
 import graphql.schema.CoercingParseValueException;
 import graphql.schema.CoercingSerializeException;
+import io.jmix.core.FileRef;
+import io.jmix.core.FileStorage;
+import io.jmix.graphql.service.FileService;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.AbstractMap;
 
 public class FileRefCoercing extends BaseScalarCoercing {
 
     @Override
     public Object serialize(Object o) throws CoercingSerializeException {
-        return null;
+        return ((FileRef) o).getPath();
     }
 
     @Override
     public Object parseValue(Object o) throws CoercingParseValueException {
-        return null;
+        String storageName = null;
+        MultipartFile multipartFile;
+        try {
+            FileService fileService = FileService.get();
+            storageName = ((AbstractMap.SimpleEntry<String, MultipartFile>) o).getKey();
+            multipartFile = ((AbstractMap.SimpleEntry<String, MultipartFile>) o).getValue();
+            FileStorage fileStorage = fileService.getFileStorage(storageName);
+            return fileService.saveFileIntoStorage(multipartFile, fileStorage);
+        } catch (Exception e) {
+            throw new CoercingParseValueException("File storage with name " + storageName + " not found");
+        }
     }
+
 }
