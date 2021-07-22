@@ -18,6 +18,7 @@ package io.jmix.graphql.schema.scalar;
 
 import graphql.Scalars;
 import graphql.schema.GraphQLScalarType;
+import io.jmix.core.FileRef;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.MetadataUtils;
@@ -61,6 +62,7 @@ public class ScalarTypes {
             CustomScalars.GraphQLOffsetDateTime,
             CustomScalars.GraphQLDate,
             CustomScalars.GraphQLDateTime,
+            CustomScalars.GraphQLFile,
             GraphQLBigDecimal,
             GraphQLLong,
             CustomScalars.GraphQLUUID,
@@ -99,6 +101,9 @@ public class ScalarTypes {
         }
         if (BigDecimal.class.isAssignableFrom(javaType)) {
             return CustomScalars.GraphQLBigDecimal.getName();
+        }
+        if (FileRef.class.isAssignableFrom(javaType)) {
+            return CustomScalars.GraphQLFile.getName();
         }
         if (Date.class.isAssignableFrom(javaType)) {
             if (MetadataUtils.isDate(metaProperty)) {
