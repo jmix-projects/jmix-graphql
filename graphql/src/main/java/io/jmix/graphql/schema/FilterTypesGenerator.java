@@ -17,7 +17,11 @@
 package io.jmix.graphql.schema;
 
 import graphql.Scalars;
-import graphql.schema.*;
+import graphql.schema.GraphQLEnumType;
+import graphql.schema.GraphQLInputObjectField;
+import graphql.schema.GraphQLInputObjectType;
+import graphql.schema.GraphQLScalarType;
+import graphql.schema.GraphQLType;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -28,7 +32,12 @@ import io.jmix.graphql.schema.scalar.ScalarTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static graphql.Scalars.*;
@@ -242,7 +251,7 @@ public class FilterTypesGenerator {
             return EnumSet.of(EQ, NEQ, IS_NULL);
         }
         if (scalarType.equals(GraphQLFile)) {
-            return EnumSet.of(IS_NULL);
+            return EnumSet.of(EQ, NEQ, IN_LIST, NOT_IN_LIST, IS_NULL);
         }
 
         throw new UnsupportedOperationException("Can't define the operation type for " + scalarType);

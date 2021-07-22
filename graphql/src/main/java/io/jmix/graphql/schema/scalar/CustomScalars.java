@@ -45,10 +45,6 @@ public class CustomScalars {
             .name("Void").coercing(new VoidCoercing()).build();
 
     public static GraphQLScalarType GraphQLFile = GraphQLScalarType.newScalar()
-            .name("FileRef").coercing(new FileRefCoercing()).build(); //applicationContext.getBean(FileService.class))
+            .name("Upload").coercing(new FileRefCoercing()).build();
 
-//    @Override
-//    public void setApplicationContext(ApplicationContext context) throws BeansException {
-//        applicationContext = context;
-//    }
 }

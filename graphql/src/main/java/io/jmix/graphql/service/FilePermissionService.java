@@ -20,7 +20,6 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service("gql_FilePermissionService")
@@ -30,7 +29,7 @@ public class FilePermissionService {
     protected AccessManager accessManager;
 
     public class GraphQLUploadContext extends SpecificOperationAccessContext {
-        public static final String NAME = "rest.fileUpload.enabled";
+        public static final String NAME = "graphql.fileUpload.enabled";
 
         public GraphQLUploadContext() {
             super(NAME);

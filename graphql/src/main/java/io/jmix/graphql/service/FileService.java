@@ -22,7 +22,6 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,7 +33,6 @@ public class FileService implements InitializingBean {
 
     @Autowired
     protected FileStorageLocator fileStorageLocator;
-
 
     private static FileService instance;
 

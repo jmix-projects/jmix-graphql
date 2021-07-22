@@ -1,7 +1,13 @@
 package io.jmix.graphql.datafetcher;
 
 import graphql.schema.DataFetcher;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.DataManager;
+import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.LoadContext;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.Sort;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
@@ -9,9 +15,9 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.graphql.NamingUtils;
 import io.jmix.graphql.loader.GraphQLEntityCountDataFetcher;
 import io.jmix.graphql.loader.GraphQLEntityCountDataFetcherContext;
-import io.jmix.graphql.loader.GraphQLEntityListDataFetcher;
 import io.jmix.graphql.loader.GraphQLEntityDataFetcher;
 import io.jmix.graphql.loader.GraphQLEntityDataFetcherContext;
+import io.jmix.graphql.loader.GraphQLEntityListDataFetcher;
 import io.jmix.graphql.loader.GraphQLEntityListDataFetcherContext;
 import io.jmix.graphql.schema.Types;
 import org.apache.commons.collections4.OrderedMap;
@@ -27,7 +33,11 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component("gql_EntityQueryDataFetcher")
