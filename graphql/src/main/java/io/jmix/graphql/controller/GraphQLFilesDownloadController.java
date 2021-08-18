@@ -145,7 +145,7 @@ public class GraphQLFilesDownloadController {
         accessManager.applyRegisteredConstraints(downloadContext);
 
         if (!downloadContext.isPermitted()) {
-//            throw new GraphQLControllerException("File download failed", "File download is not permitted", HttpStatus.FORBIDDEN);
+            throw new GraphQLControllerException("File download failed", "File download is not permitted", HttpStatus.FORBIDDEN);
         }
     }
 }
