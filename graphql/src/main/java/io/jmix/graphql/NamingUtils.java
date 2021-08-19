@@ -17,11 +17,9 @@
 package io.jmix.graphql;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.leangen.graphql.annotations.GraphQLQuery;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotNull;
-import java.lang.reflect.Method;
 
 public class NamingUtils {
 
@@ -88,25 +86,5 @@ public class NamingUtils {
     @NotNull
     public static String uncapitalizedSimpleName(Class<?> aClass) {
         return StringUtils.uncapitalize(aClass.getSimpleName());
-    }
-
-    @NotNull
-    public static String getQueryName(Method method) {
-        GraphQLQuery annotation = method.getAnnotation(GraphQLQuery.class);
-        if (annotation != null && StringUtils.isNotEmpty(annotation.name())) {
-            return annotation.name();
-        }
-        return getQueryName(method.getName());
-    }
-
-    @NotNull
-    private static String getQueryName(String methodName) {
-        String queryName = methodName.startsWith("get") ? methodName.substring(3) : methodName;
-        if (queryName.length() > 2) {
-            if (Character.isUpperCase(queryName.charAt(0)) && Character.isUpperCase(queryName.charAt(1))) {
-                return queryName;
-            }
-        }
-        return StringUtils.uncapitalize(methodName);
     }
 }
