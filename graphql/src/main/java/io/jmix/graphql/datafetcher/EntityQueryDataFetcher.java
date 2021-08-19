@@ -149,8 +149,6 @@ public class EntityQueryDataFetcher {
             }
             List<Object> objects;
             if (queryDataFetcherLoader.getCustomEntitiesFetcher(metaClass.getJavaClass()) == null) {
-                objects;
-            if (queryDataFetcherLoader.getCustomEntitiesFetcher(metaClass.getJavaClass()) == null) {
                 objects = dataManager.loadList(ctx);
             } else {
                 Object bean = queryDataFetcherLoader.getCustomEntitiesFetcher(metaClass.getJavaClass());
@@ -253,8 +251,6 @@ public class EntityQueryDataFetcher {
                 lc.setHint("jmix.softDeletion", softDeletion);
             }
             long count;
-            if (queryDataFetcherLoader.getCustomCountFetcher(metaClass.getJavaClass()) == null) {
-                count;
             if (queryDataFetcherLoader.getCustomCountFetcher(metaClass.getJavaClass()) == null) {
                 count = dataManager.getCount(lc);
             } else {
