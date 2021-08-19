@@ -40,6 +40,7 @@ import io.jmix.graphql.schema.JmixTypeInfoGenerator;
 import io.jmix.graphql.schema.MessageTypesGenerator;
 import io.jmix.graphql.schema.PermissionTypesGenerator;
 import io.jmix.graphql.schema.scalar.ScalarTypes;
+import io.jmix.graphql.schema.scalar.ScalarTypes;
 import io.jmix.graphql.security.SpecificPermissionInstrumentation;
 import io.jmix.graphql.spqr.SpqrSchemaGenerator;
 import io.leangen.geantyref.GenericTypeReflector;
