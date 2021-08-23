@@ -542,6 +542,10 @@ type UserInfo {
   username: String
 }
 
+type inaccessibleQuery {
+
+}
+
 type gql_MessageDetail {
   key: String
   value: String
