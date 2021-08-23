@@ -27,6 +27,6 @@ public interface FullAccessRole {
     @EntityPolicy(entityName = "*", actions = {EntityPolicyAction.ALL})
     @EntityAttributePolicy(entityName = "*", attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @SpecificPolicy(resources = "*")
-    @GraphQLPolicy(operationNames = "*")
+    @GraphQLPolicy(operations = "*")
     void fullAccess();
 }
