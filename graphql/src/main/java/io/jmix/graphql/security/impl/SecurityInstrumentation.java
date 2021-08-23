@@ -20,30 +20,46 @@ import graphql.ExecutionResult;
 import graphql.execution.AbortExecutionException;
 import graphql.execution.instrumentation.InstrumentationContext;
 import graphql.execution.instrumentation.SimpleInstrumentation;
-import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters;
+import graphql.execution.instrumentation.parameters.InstrumentationExecuteOperationParameters;
+import graphql.language.Field;
+import graphql.language.OperationDefinition;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.accesscontext.GraphQLOperationAccessContext;
 import io.jmix.graphql.spqr.SpqrCustomSchemeRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class SecurityInstrumentation extends SimpleInstrumentation {
 
-    @Autowired
-    private SpqrCustomSchemeRegistry schemeRegistry;
-    @Autowired
-    private AccessManager accessManager;
-    @Autowired
-    private Messages messages;
+    private final SpqrCustomSchemeRegistry schemeRegistry;
+    private final AccessManager accessManager;
+    private final Messages messages;
+
+    public SecurityInstrumentation(SpqrCustomSchemeRegistry schemeRegistry, AccessManager accessManager, Messages messages) {
+        this.schemeRegistry = schemeRegistry;
+        this.accessManager = accessManager;
+        this.messages = messages;
+    }
 
     @Override
-    public InstrumentationContext<ExecutionResult> beginExecution(InstrumentationExecutionParameters parameters) {
-        GraphQLOperationAccessContext accessContext = new GraphQLOperationAccessContext(parameters.getOperation());
-        accessManager.applyRegisteredConstraints(accessContext);
+    public InstrumentationContext<ExecutionResult> beginExecuteOperation(InstrumentationExecuteOperationParameters parameters) {
+        OperationDefinition operationDefinition = parameters.getExecutionContext().getOperationDefinition();
 
-        if (!schemeRegistry.isCustomOperation(parameters.getOperation()) || accessContext.isPermitted()) {
-            return super.beginExecution(parameters);
+        if (operationDefinition.getOperation().equals(OperationDefinition.Operation.QUERY)
+                || operationDefinition.getOperation().equals(OperationDefinition.Operation.MUTATION)) {
+
+            String operationName = getOperationName(operationDefinition);
+
+            GraphQLOperationAccessContext accessContext = new GraphQLOperationAccessContext(operationName);
+            accessManager.applyRegisteredConstraints(accessContext);
+
+            if (schemeRegistry.isCustomOperation(operationName) && !accessContext.isPermitted()) {
+                throw new AbortExecutionException(messages.getMessage("io.jmix.graphql/gqlQueryAccessDenied"));
+            }
         }
-        throw new AbortExecutionException(messages.getMessage("io.jmix.graphql/gqlQueryAccessDenied"));
+        return super.beginExecuteOperation(parameters);
+    }
+
+    private String getOperationName(OperationDefinition operationDefinition) {
+        return ((Field) operationDefinition.getSelectionSet().getSelections().get(0)).getName();
     }
 }

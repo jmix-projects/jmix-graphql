@@ -17,7 +17,6 @@
 package io.jmix.graphql.spqr;
 
 import graphql.schema.GraphQLFieldDefinition;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ public class SpqrCustomSchemeRegistry {
 
     public boolean isCustomOperation(String operationName) {
         for (GraphQLFieldDefinition operation : operations) {
-            if (StringUtils.isNotEmpty(operationName) && operation.getName().equals(operationName)) {
+            if (operation.getName().equals(operationName)) {
                 return true;
             }
         }
