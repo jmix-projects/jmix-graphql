@@ -19,12 +19,15 @@ package io.jmix.graphql.spqr;
 import graphql.schema.GraphQLFieldDefinition;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * Component that stores a list of custom graphQL operation names. Used to implement a protection mechanism.
+ */
 @Component("ggc_SpqrCustomSchemeRegistry")
 public class SpqrCustomSchemeRegistry {
-    private List<GraphQLFieldDefinition> operations = new ArrayList<>(0);
+    private List<GraphQLFieldDefinition> operations = new CopyOnWriteArrayList<>();
 
     public void addOperations(List<GraphQLFieldDefinition> operations) {
         this.operations.addAll(operations);
