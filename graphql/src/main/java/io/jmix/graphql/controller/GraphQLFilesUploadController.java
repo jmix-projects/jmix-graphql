@@ -21,7 +21,6 @@ import graphql.GraphQL;
 import io.jmix.core.AccessManager;
 import io.jmix.core.FileClientManager;
 import io.jmix.core.FileInfoResponse;
-import io.jmix.core.FileStorageLocator;
 import io.jmix.graphql.accesscontext.GraphQLAccessContext;
 import io.jmix.graphql.service.FilePermissionService;
 import io.leangen.graphql.spqr.spring.web.GraphQLController;
@@ -60,9 +59,6 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
 
     @Autowired
     protected FilePermissionService filePermissionService;
-
-    @Autowired
-    protected FileStorageLocator fileStorageLocator;
 
     @Autowired
     protected AccessManager accessManager;

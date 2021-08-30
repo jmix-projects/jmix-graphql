@@ -19,10 +19,7 @@ package io.jmix.graphql.controller;
 import io.jmix.core.AccessManager;
 import io.jmix.core.FileClientManager;
 import io.jmix.core.FileRef;
-import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageLocator;
 import io.jmix.core.Metadata;
-import io.jmix.graphql.accesscontext.GraphQLAccessContext;
 import io.jmix.graphql.service.FilePermissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +39,6 @@ public class GraphQLFilesDownloadController {
 
     private static final Logger log = LoggerFactory.getLogger(GraphQLFilesDownloadController.class);
 
-    @Autowired
-    protected FileStorageLocator fileStorageLocator;
     @Autowired
     protected Metadata metadata;
     @Autowired
