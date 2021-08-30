@@ -17,7 +17,7 @@
 package io.jmix.graphql.controller;
 
 import io.jmix.core.AccessManager;
-import io.jmix.core.FileClientUtils;
+import io.jmix.core.FileClientManager;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
@@ -47,6 +47,8 @@ public class GraphQLFilesDownloadController {
     protected Metadata metadata;
     @Autowired
     protected AccessManager accessManager;
+    @Autowired
+    protected FileClientManager fileClientManager;
 
     @GetMapping("/graphql/files")
     public void downloadFile(@RequestParam("fileRef") String fileRef,
@@ -57,9 +59,7 @@ public class GraphQLFilesDownloadController {
         try {
             FileRef fileReference;
             fileReference = FileRef.fromString(fileRef);
-            FileStorage fileStorage = FileClientUtils.getFileStorageByNameOrDefault(fileStorageLocator,
-                    fileReference.getStorageName(), fileReference.getFileName());
-            FileClientUtils.downloadAndWriteResponse(fileReference, fileStorage, attachment, response);
+            fileClientManager.downloadAndWriteResponse(fileReference, fileReference.getStorageName(), attachment, response);
         } catch (IllegalArgumentException e) {
             throw new GraphQLControllerException("Invalid file reference",
                     String.format("Cannot convert '%s' into valid file reference", fileRef),

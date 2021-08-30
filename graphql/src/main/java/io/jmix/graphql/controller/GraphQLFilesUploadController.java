@@ -19,9 +19,8 @@ package io.jmix.graphql.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.GraphQL;
 import io.jmix.core.AccessManager;
-import io.jmix.core.FileClientUtils;
+import io.jmix.core.FileClientManager;
 import io.jmix.core.FileInfoResponse;
-import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.graphql.accesscontext.GraphQLAccessContext;
 import io.jmix.graphql.service.FilePermissionService;
@@ -67,6 +66,9 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
 
     @Autowired
     protected AccessManager accessManager;
+
+    @Autowired
+    protected FileClientManager fileClientManager;
 
     private static final Logger log = LoggerFactory.getLogger(GraphQLFilesUploadController.class);
 
@@ -135,8 +137,7 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
                                                @RequestParam(required = false) String name,
                                                @RequestParam(required = false) String storageName) {
         filePermissionService.checkFileUploadPermission();
-        FileStorage fileStorage = FileClientUtils.getFileStorageByNameOrDefault(fileStorageLocator ,storageName, name);
-        return FileClientUtils.fileUpload(name, fileStorage, request);
+        return fileClientManager.fileUpload(name, storageName, request);
     }
 
     /**
@@ -148,8 +149,7 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
                                                @RequestParam(required = false) String storageName,
                                                HttpServletRequest request) {
         filePermissionService.checkFileUploadPermission();
-        FileStorage fileStorage = FileClientUtils.getFileStorageByNameOrDefault(fileStorageLocator ,storageName, name);
-        return FileClientUtils.multipartFileUpload(file, name, fileStorage, request);
+        return  fileClientManager.multipartFileUpload(file, name, storageName, request);
     }
 
 }
