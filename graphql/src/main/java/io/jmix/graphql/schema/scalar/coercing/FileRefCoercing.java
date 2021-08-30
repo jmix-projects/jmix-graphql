@@ -22,12 +22,21 @@ import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.graphql.service.FileService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.AbstractMap;
 
 public class FileRefCoercing extends BaseScalarCoercing {
+
+    FileService fileService;
+
+    public FileRefCoercing(FileService fileService) {
+        this.fileService = fileService;
+    }
 
     @Override
     public Object serialize(Object o) throws CoercingSerializeException {
@@ -37,7 +46,6 @@ public class FileRefCoercing extends BaseScalarCoercing {
     @Override
     public Object parseValue(Object o) throws CoercingParseValueException {
         String storageName = null;
-        FileService fileService = FileService.get();
         try {
             if (o instanceof AbstractMap.SimpleEntry) {
 
@@ -59,8 +67,12 @@ public class FileRefCoercing extends BaseScalarCoercing {
                     }
                     return o;
             }
-        }
-        catch (Exception e) {
+        } catch (FileNotFoundException e) {
+            throw new CoercingParseValueException("File with name " + FileRef.fromString((String) o).getFileName()
+                    + " not found");
+        } catch (IOException e) {
+            throw new CoercingParseValueException("Exception with saving file") ;
+        } catch (Exception e) {
             throw new CoercingParseValueException("File storage with name " + storageName + " not found");
         }
         return null;

@@ -69,15 +69,7 @@ public class EntityQueryDataFetcher {
 
             String id = environment.getArgument("id");
             LoadContext<?> lc = new LoadContext<>(metaClass);
-            // todo support not only UUID types of id
-            try{
-                UUID uuid = UUID.fromString(id);
-                lc.setId(UUID.fromString(id));
-                //do something
-            } catch (IllegalArgumentException exception){
-                lc.setId(id);
-            }
-
+            lc.setId(UUID.fromString(id));
             FetchPlan fetchPlan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
             lc.setFetchPlan(fetchPlan);
             Boolean softDeletion = environment.getArgument(NamingUtils.SOFT_DELETION);

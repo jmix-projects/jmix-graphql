@@ -42,7 +42,4 @@ public class CustomScalars {
     public static GraphQLScalarType GraphQLVoid = GraphQLScalarType.newScalar()
             .name("Void").coercing(new VoidCoercing()).build();
 
-    public static GraphQLScalarType GraphQLFile = GraphQLScalarType.newScalar()
-            .name("Upload").coercing(new FileRefCoercing()).build();
-
 }

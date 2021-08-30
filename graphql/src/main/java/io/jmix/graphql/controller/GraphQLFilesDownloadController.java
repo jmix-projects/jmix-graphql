@@ -23,6 +23,7 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.Metadata;
 import io.jmix.graphql.accesscontext.GraphQLAccessContext;
+import io.jmix.graphql.service.FilePermissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,13 +48,15 @@ public class GraphQLFilesDownloadController {
     protected Metadata metadata;
     @Autowired
     protected AccessManager accessManager;
+    @Autowired
+    protected FilePermissionService filePermissionService;
 
     @GetMapping("/graphql/files")
     public void downloadFile(@RequestParam("fileRef") String fileRef,
                              @RequestParam(required = false) Boolean attachment,
                              HttpServletResponse response) {
 
-        checkFileDownloadPermission();
+        filePermissionService.checkFileDownloadPermission();
         try {
             FileRef fileReference;
             fileReference = FileRef.fromString(fileRef);
@@ -69,13 +72,5 @@ public class GraphQLFilesDownloadController {
 
     }
 
-    protected void checkFileDownloadPermission() {
-        GraphQLAccessContext downloadContext =
-                new GraphQLAccessContext(GraphQLAccessContext.GRAPHQL_FILE_DOWNLOAD_ENABLED);
-        accessManager.applyRegisteredConstraints(downloadContext);
 
-        if (!downloadContext.isPermitted()) {
-            throw new GraphQLControllerException("File download failed", "File download is not permitted", HttpStatus.FORBIDDEN);
-        }
-    }
 }
