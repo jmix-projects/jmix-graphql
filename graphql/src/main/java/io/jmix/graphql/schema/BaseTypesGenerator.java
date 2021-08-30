@@ -16,11 +16,7 @@
 
 package io.jmix.graphql.schema;
 
-import graphql.schema.GraphQLArgument;
-import graphql.schema.GraphQLInputObjectField;
-import graphql.schema.GraphQLList;
-import graphql.schema.GraphQLNonNull;
-import graphql.schema.GraphQLTypeReference;
+import graphql.schema.*;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.NamingUtils;
@@ -123,7 +119,9 @@ public class BaseTypesGenerator {
         }
 
         // todo no support for non-persistent jmix entities
-        if ((metaProperty.getType() == MetaProperty.Type.ASSOCIATION || metaProperty.getType() == MetaProperty.Type.COMPOSITION)) {
+        if ((metaProperty.getType() == MetaProperty.Type.ASSOCIATION
+                || metaProperty.getType() == MetaProperty.Type.COMPOSITION
+                || metaProperty.getType() == MetaProperty.Type.EMBEDDED)) {
             return getReferenceTypeName(metaProperty);
         }
 

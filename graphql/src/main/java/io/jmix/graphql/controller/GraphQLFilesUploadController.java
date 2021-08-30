@@ -17,15 +17,13 @@
 package io.jmix.graphql.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 import graphql.GraphQL;
 import io.jmix.core.AccessManager;
-import io.jmix.core.FileRef;
+import io.jmix.core.FileClientUtils;
+import io.jmix.core.FileInfoResponse;
 import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
-import io.jmix.core.Metadata;
-import io.jmix.core.common.util.URLEncodeUtils;
+import io.jmix.graphql.accesscontext.GraphQLAccessContext;
 import io.jmix.graphql.service.FilePermissionService;
 import io.leangen.graphql.spqr.spring.web.GraphQLController;
 import io.leangen.graphql.spqr.spring.web.dto.GraphQLRequest;
@@ -33,10 +31,10 @@ import io.leangen.graphql.spqr.spring.web.mvc.GraphQLMvcExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,18 +44,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.Nullable;
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.io.InputStream;
-import java.net.URI;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController("graphql_FilesController")
 @CrossOrigin
@@ -70,6 +61,12 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
 
     @Autowired
     protected FilePermissionService filePermissionService;
+
+    @Autowired
+    protected FileStorageLocator fileStorageLocator;
+
+    @Autowired
+    protected AccessManager accessManager;
 
     private static final Logger log = LoggerFactory.getLogger(GraphQLFilesUploadController.class);
 
@@ -90,7 +87,7 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
                                        @RequestPart(value = "storageName", required = false) String storageName,
                                        MultipartHttpServletRequest multiPartRequest,
                                        NativeWebRequest webRequest) throws Exception {
-        filePermissionService.checkFileUploadPermission();
+        checkFileUploadPermission();
 
         GraphQLRequest graphQLRequest = new ObjectMapper().readerFor(GraphQLRequest.class).readValue(operations);
         Map<String, ArrayList<String>> fileMap = new ObjectMapper().readerFor(Map.class).readValue(map);
@@ -119,148 +116,40 @@ public class GraphQLFilesUploadController extends GraphQLController<NativeWebReq
         }
     }
 
-    @Autowired
-    protected Metadata metadata;
+    public void checkFileUploadPermission() {
+        GraphQLAccessContext uploadContext = new GraphQLAccessContext(GraphQLAccessContext.GRAPHQL_FILE_UPLOAD_ENABLED);
+        accessManager.applyRegisteredConstraints(uploadContext);
 
-    @Autowired
-    protected FileStorageLocator fileStorageLocator;
+        if (!uploadContext.isPermitted()) {
+            throw new AccessDeniedException("File upload failed. File upload is not permitted");
+        }
+    }
 
-    @Autowired
-    protected AccessManager accessManager;
 
     /**
      * Method for simple file upload. File contents are placed in the request body. Optional file name parameter is
      * passed as a query param.
      */
     @PostMapping(path = "${graphql.spqr.http.endpoint:/graphql/files}", consumes = "!multipart/form-data")
-    public ResponseEntity<FileInfo> uploadFile(HttpServletRequest request,
+    public ResponseEntity<FileInfoResponse> uploadFile(HttpServletRequest request,
                                                @RequestParam(required = false) String name,
                                                @RequestParam(required = false) String storageName) {
         filePermissionService.checkFileUploadPermission();
-
-        FileStorage fileStorage = getFileStorage(storageName);
-        try {
-            String contentLength = request.getHeader("Content-Length");
-
-            long size = 0;
-            try {
-                size = Long.parseLong(contentLength);
-            } catch (NumberFormatException ignored) {
-            }
-
-            ServletInputStream is = request.getInputStream();
-            name = Objects.toString(name, "");
-            FileRef fileRef = uploadToFileStorage(fileStorage, is, name);
-
-            return createFileInfoResponseEntity(request, fileRef, name, size);
-        } catch (Exception e) {
-            log.error("File upload failed", e);
-            throw new GraphQLControllerException("File upload failed", "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR, e);
-        }
+        FileStorage fileStorage = FileClientUtils.getFileStorageByNameOrDefault(fileStorageLocator ,storageName, name);
+        return FileClientUtils.fileUpload(name, fileStorage, request);
     }
 
     /**
      * Method for multipart file upload. It expects the file contents to be passed in the part called 'file'.
      */
     @PostMapping(path = "${graphql.spqr.http.endpoint:/graphql/files}", consumes = "multipart/form-data")
-    public ResponseEntity<FileInfo> uploadFile(@RequestParam("file") MultipartFile file,
+    public ResponseEntity<FileInfoResponse> uploadFile(@RequestParam("file") MultipartFile file,
                                                @RequestParam(required = false) String name,
                                                @RequestParam(required = false) String storageName,
                                                HttpServletRequest request) {
         filePermissionService.checkFileUploadPermission();
-
-        FileStorage fileStorage = getFileStorage(storageName);
-        try {
-            if (Strings.isNullOrEmpty(name)) {
-                name = file.getOriginalFilename();
-            }
-            name = Objects.toString(name, "");
-
-            long size = file.getSize();
-
-            InputStream is = file.getInputStream();
-            FileRef fileRef = uploadToFileStorage(fileStorage, is, name);
-
-            return createFileInfoResponseEntity(request, fileRef, name, size);
-        } catch (Exception e) {
-            log.error("File upload failed", e);
-            throw new GraphQLControllerException("File upload failed", "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR, e);
-        }
+        FileStorage fileStorage = FileClientUtils.getFileStorageByNameOrDefault(fileStorageLocator ,storageName, name);
+        return FileClientUtils.multipartFileUpload(file, name, fileStorage, request);
     }
 
-    protected FileStorage getFileStorage(@Nullable String storageName) {
-        if (Strings.isNullOrEmpty(storageName)) {
-            return fileStorageLocator.getDefault();
-        } else {
-            try {
-                return fileStorageLocator.getByName(storageName);
-            } catch (IllegalArgumentException e) {
-                throw new GraphQLControllerException("Invalid storage name",
-                        String.format("Cannot find FileStorage with the given name: '%s'", storageName),
-                        HttpStatus.BAD_REQUEST,
-                        e);
-            }
-        }
-    }
-
-    protected ResponseEntity<FileInfo> createFileInfoResponseEntity(HttpServletRequest request,
-                                                                    FileRef fileRef, String filename, long size) {
-        FileInfo fileInfo = new FileInfo(fileRef.toString(), filename, size);
-
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
-                .queryParam("fileRef", URLEncodeUtils.encodeUtf8(fileRef.toString()))
-                .buildAndExpand();
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(URI.create(uriComponents.toUriString()));
-        return new ResponseEntity<>(fileInfo, httpHeaders, HttpStatus.CREATED);
-    }
-
-    protected FileRef uploadToFileStorage(FileStorage fileStorage, InputStream is, String fileName)
-            throws FileStorageException {
-        try {
-            return fileStorage.saveStream(fileName, is);
-        } catch (FileStorageException e) {
-            throw new GraphQLControllerException("Unable to upload file to FileStorage",
-                    "Unable to upload file to FileStorage: " + fileName,
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    e);
-        }
-    }
-
-    public class FileInfo {
-        protected String fileRef;
-        protected String name;
-        protected long size;
-
-        public FileInfo(String fileRef, String name, long size) {
-            this.fileRef = fileRef;
-            this.name = name;
-            this.size = size;
-        }
-
-        public String getFileRef() {
-            return fileRef;
-        }
-
-        public void setFileRef(String fileRef) {
-            this.fileRef = fileRef;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public long getSize() {
-            return size;
-        }
-
-        public void setSize(long size) {
-            this.size = size;
-        }
-    }
 }

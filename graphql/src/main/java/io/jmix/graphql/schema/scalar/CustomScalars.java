@@ -26,8 +26,6 @@ public class CustomScalars {
     public static GraphQLScalarType GraphQLLocalDate = new LocalDateScalar();
     public static GraphQLScalarType GraphQLOffsetDateTime = new OffsetDateTimeScalar();
 
-    private static ApplicationContext applicationContext;
-
     public static GraphQLScalarType GraphQLLong = GraphQLScalarType.newScalar()
             .name("Long")
             .coercing(new LongCoercing()).build();

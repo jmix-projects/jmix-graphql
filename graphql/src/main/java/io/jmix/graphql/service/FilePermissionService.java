@@ -18,6 +18,7 @@ package io.jmix.graphql.service;
 
 import io.jmix.core.AccessManager;
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
+import io.jmix.graphql.accesscontext.GraphQLAccessContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -28,16 +29,8 @@ public class FilePermissionService {
     @Autowired
     protected AccessManager accessManager;
 
-    public class GraphQLUploadContext extends SpecificOperationAccessContext {
-        public static final String NAME = "graphql.fileUpload.enabled";
-
-        public GraphQLUploadContext() {
-            super(NAME);
-        }
-    }
-
     public void checkFileUploadPermission() {
-        GraphQLUploadContext uploadContext = new GraphQLUploadContext();
+        GraphQLAccessContext uploadContext = new GraphQLAccessContext(GraphQLAccessContext.GRAPHQL_FILE_UPLOAD_ENABLED);
         accessManager.applyRegisteredConstraints(uploadContext);
 
         if (!uploadContext.isPermitted()) {

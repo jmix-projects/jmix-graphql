@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.graphql.schema.Types;
 import org.apache.commons.collections4.OrderedMap;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class GraphQLEntityListDataFetcherContext<E> {
     private MetaClass metaClass;

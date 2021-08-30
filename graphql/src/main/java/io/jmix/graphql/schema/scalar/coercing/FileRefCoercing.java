@@ -24,30 +24,46 @@ import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.graphql.service.FileService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.util.AbstractMap;
 
 public class FileRefCoercing extends BaseScalarCoercing {
 
     @Override
     public Object serialize(Object o) throws CoercingSerializeException {
-        return ((FileRef) o).getPath();
+        return ((FileRef) o).toString();
     }
 
     @Override
     public Object parseValue(Object o) throws CoercingParseValueException {
         String storageName = null;
-        MultipartFile multipartFile;
+        FileService fileService = FileService.get();
         try {
-            FileService fileService = FileService.get();
-            storageName = ((AbstractMap.SimpleEntry<String, MultipartFile>) o).getKey();
-            multipartFile = ((AbstractMap.SimpleEntry<String, MultipartFile>) o).getValue();
-            FileStorage fileStorage = fileService.getFileStorage(storageName);
-            FileRefDatatype refDatatype = new FileRefDatatype();
-            FileRef fileRef = fileService.saveFileIntoStorage(multipartFile, fileStorage);
-            return refDatatype.format(fileRef);
-        } catch (Exception e) {
+            if (o instanceof AbstractMap.SimpleEntry) {
+
+                    storageName = ((AbstractMap.SimpleEntry<String, MultipartFile>) o).getKey();
+                    FileStorage fileStorage = fileService.getFileStorage(storageName);
+                    MultipartFile multipartFile = ((AbstractMap.SimpleEntry<String, MultipartFile>) o).getValue();
+
+                    FileRefDatatype refDatatype = new FileRefDatatype();
+                    FileRef fileRef = fileService.saveFileIntoStorage(multipartFile, fileStorage);
+                    return refDatatype.format(fileRef);
+
+            }
+            if (o instanceof String) {
+
+                    FileRef fileRef = FileRef.fromString((String) o);
+                    FileStorage fileStorage = fileService.getFileStorage(fileRef.getStorageName());
+                    if (!fileStorage.fileExists(fileRef)) {
+                        throw new FileNotFoundException();
+                    }
+                    return o;
+            }
+        }
+        catch (Exception e) {
             throw new CoercingParseValueException("File storage with name " + storageName + " not found");
         }
+        return null;
     }
 
 }
