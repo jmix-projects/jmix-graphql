@@ -29,21 +29,10 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 
 @Service("gql_FileService")
-public class FileService implements InitializingBean {
+public class FileService {
 
     @Autowired
     protected FileStorageLocator fileStorageLocator;
-
-    private static FileService instance;
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        instance = this;
-    }
-
-    public static FileService get() {
-        return instance;
-    }
 
     public FileRef saveFileIntoStorage(MultipartFile multipartFile, FileStorage storage) throws IOException {
         return storage.saveStream(multipartFile.getName(), multipartFile.getInputStream());

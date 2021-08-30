@@ -19,7 +19,9 @@ package io.jmix.graphql.service;
 import io.jmix.core.AccessManager;
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 import io.jmix.graphql.accesscontext.GraphQLAccessContext;
+import io.jmix.graphql.controller.GraphQLControllerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,16 @@ public class FilePermissionService {
 
         if (!uploadContext.isPermitted()) {
             throw new AccessDeniedException("File upload failed. File upload is not permitted");
+        }
+    }
+
+    public void checkFileDownloadPermission() {
+        GraphQLAccessContext downloadContext =
+                new GraphQLAccessContext(GraphQLAccessContext.GRAPHQL_FILE_DOWNLOAD_ENABLED);
+        accessManager.applyRegisteredConstraints(downloadContext);
+
+        if (!downloadContext.isPermitted()) {
+            throw new GraphQLControllerException("File download failed", "File download is not permitted", HttpStatus.FORBIDDEN);
         }
     }
 }
