@@ -42,6 +42,8 @@ import io.jmix.graphql.schema.PermissionTypesGenerator;
 import io.jmix.graphql.schema.scalar.ScalarTypes;
 import io.jmix.graphql.schema.scalar.ScalarTypes;
 import io.jmix.graphql.security.SpecificPermissionInstrumentation;
+import io.jmix.graphql.security.impl.SecurityInstrumentation;
+import io.jmix.graphql.spqr.SpqrCustomSchemeRegistry;
 import io.jmix.graphql.spqr.SpqrSchemaGenerator;
 import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.graphql.metadata.strategy.query.AbstractResolverBuilder;
@@ -129,11 +131,14 @@ public class GraphQLConfiguration {
     protected JmixTypeInfoGenerator jmixTypeInfoGenerator;
     @Autowired
     protected ScalarTypes scalarTypes;
+    @Autowired
+    SpqrCustomSchemeRegistry schemeRegistry;
 
 
     @Bean
     public List<Instrumentation> instrumentationList() {
         return Arrays.asList(
+                new SecurityInstrumentation(schemeRegistry,accessManager,messages),
                 new OperationRateLimitInstrumentation(operationRateLimitService),
                 new SpecificPermissionInstrumentation(accessManager, messages),
                 new JmixMaxQueryDepthInstrumentation(limitationProperties.getMaxQueryDepth())
