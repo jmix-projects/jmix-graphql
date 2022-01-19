@@ -16,13 +16,17 @@
 
 package io.jmix.graphql;
 
+import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.Store;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +35,9 @@ public class MetadataUtils {
 
     @Autowired
     MetadataTools metadataTools;
+
+    @Autowired
+    Metadata metadata;
 
     public static final String DATATYPE_ID_DATE = "date";
     public static final String DATATYPE_ID_TIME = "time";
@@ -53,9 +60,8 @@ public class MetadataUtils {
     }
 
     public List<MetaClass> allSupportedMetaClasses() {
-        return metadataTools.getAllJpaEntityMetaClasses()
-                // todo need to be fixed later - ReferenceToEntity is not persistent but returned in 'metadataTools.getAllPersistentMetaClasses'
-                .stream()
+        return metadata.getSession().getClasses().stream()
+                .filter(cls -> !cls.getStore().getName().equals("noop"))
                 .filter(metaClass -> !metaClass.getJavaClass().getSimpleName().equals("ReferenceToEntity"))
                 .collect(Collectors.toList());
     }
