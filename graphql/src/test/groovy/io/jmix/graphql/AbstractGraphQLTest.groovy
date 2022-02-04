@@ -32,6 +32,7 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.test.context.TestPropertySource
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionTemplate
@@ -42,6 +43,7 @@ import test_support.entity.Car
 
 
 @SpringBootTest(classes = App, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = ["spring.main.allow-circular-references=true"])
 class AbstractGraphQLTest extends Specification {
 
     @LocalServerPort
