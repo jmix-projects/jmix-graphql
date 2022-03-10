@@ -107,7 +107,7 @@ public class EntityMutationDataFetcher {
                     throw new GqlEntityValidationException(ex, "Can't save entity to database. Access denied");
                 }
 
-                mainEntity = getMainEntity(objects, metaClass);
+                mainEntity = objects.isEmpty() ? entity : getMainEntity(objects, metaClass);
 
                 // reload for response fetch plan, if required
                 if (!entityStates.isLoadedWithFetchPlan(mainEntity, fetchPlan)) {
@@ -189,10 +189,10 @@ public class EntityMutationDataFetcher {
 
         Object id = EntityValues.getId(entity);
         List<String> excludedProperties = metaClass.getProperties().stream()
+                .filter(metaProperty -> !metaProperty.isReadOnly())
                 .filter(metaProperty -> {
                     Object value = EntityValues.getValue(entity, metaProperty.getName());
-                    return value != null
-                            && !value.equals(id);
+                    return value != null && !value.equals(id);
                 })
                 .map(MetaProperty::getName)
                 .filter(name -> !availableProperties.contains(name))
@@ -271,7 +271,6 @@ public class EntityMutationDataFetcher {
             }
         }
     }
-
 
 
 }
